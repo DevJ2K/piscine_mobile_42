@@ -25,13 +25,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var calculField = TextEditingController();
+  var expressionField = TextEditingController();
   var resultField = TextEditingController();
 
   void addInput(String input) {
-    if (calculField.text.length < 24) {
+    if (expressionField.text.length < 24) {
       setState(() {
-        calculField.text += input;
+        expressionField.text += input;
       });
     }
   }
@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> {
                           border: InputBorder.none),
                       textAlign: TextAlign.end,
                       enabled: false,
-                      controller: calculField,
+                      controller: expressionField,
                     ),
                   ),
                   Padding(
@@ -100,10 +100,10 @@ class _MyAppState extends State<MyApp> {
                         touch: "C",
                         color: MyColors.deleteColor,
                         onPressed: () => {
-                          if (calculField.text.isNotEmpty)
+                          if (expressionField.text.isNotEmpty)
                             {
-                              calculField.text = calculField.text
-                                  .substring(0, calculField.text.length - 1)
+                              expressionField.text = expressionField.text
+                                  .substring(0, expressionField.text.length - 1)
                             }
                         },
                       ),
@@ -111,7 +111,7 @@ class _MyAppState extends State<MyApp> {
                         touch: "AC",
                         color: MyColors.deleteColor,
                         onPressed: () {
-                          calculField.text = "";
+                          expressionField.text = "";
                           resultField.text = "";
                         },
                       ),
@@ -170,9 +170,9 @@ class _MyAppState extends State<MyApp> {
                         onPressed: () {
                           try {
                             Parser p = Parser();
-                            Expression exp = p.parse(calculField.text == ""
+                            Expression exp = p.parse(expressionField.text == ""
                                 ? "0"
-                                : calculField.text);
+                                : expressionField.text);
                             ContextModel cm = ContextModel();
                             double eval = exp.evaluate(EvaluationType.REAL, cm);
 
@@ -182,7 +182,7 @@ class _MyAppState extends State<MyApp> {
                               resultField.text = eval.toString();
                             }
                           } catch (e) {
-                            debugPrint("Invalid calcul");
+                            debugPrint("You've enter an invalid expression !");
                             resultField.text = "Error";
                           }
                         },
