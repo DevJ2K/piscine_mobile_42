@@ -4,14 +4,9 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,28 +20,23 @@ class _MyAppState extends State<MyApp> {
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.green,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: const Offset(0, 3)
-                      )
-                    ],
-                    borderRadius: BorderRadius.circular(48),
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 3.0
-                    )
-                  ),
+                      color: Colors.green,
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: const Offset(0, 3))
+                      ],
+                      borderRadius: BorderRadius.circular(48),
+                      border: Border.all(color: Colors.white, width: 3.0)),
                   padding: const EdgeInsets.all(16),
                   child: const Text(
-                      "A simple text",
-                      style: TextStyle(
-                        fontSize: 42,
-                        color: Colors.white,
-                      ),
+                    "A simple text",
+                    style: TextStyle(
+                      fontSize: 42,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -55,13 +45,10 @@ class _MyAppState extends State<MyApp> {
                   debugPrint("Button pressed");
                 },
                 style: ButtonStyle(
-                  shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
+                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
                   )),
-                  backgroundColor: const MaterialStatePropertyAll(
-                    Colors.white
-                  ),
+                  backgroundColor: const MaterialStatePropertyAll(Colors.white),
                 ),
                 child: const Text(
                   "Click me",
