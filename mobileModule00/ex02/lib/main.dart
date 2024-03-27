@@ -24,7 +24,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var calculField = TextEditingController();
+  var expressionField = TextEditingController();
   var resultField = TextEditingController();
 
 
@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "Calculator",
       home: Scaffold(
-        backgroundColor: Color(0xFF01002B),
+        backgroundColor: const Color(0xFF01002B),
         appBar: AppBar(
           title: const Center(child: Text("Calculator")),
           backgroundColor: MyColors.menuColor,
@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
         body: Column(
           children: [
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
                   Padding(
@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
                           border: InputBorder.none),
                       textAlign: TextAlign.end,
                       enabled: false,
-                      controller: calculField,
+                      controller: expressionField,
                     ),
                   ),
                   Padding(
@@ -125,10 +125,10 @@ class _MyAppState extends State<MyApp> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      MyTouch(touch: "0"),
-                      MyTouch(touch: "."),
-                      MyTouch(touch: "00"),
-                      MyTouch(touch: "=", color: MyColors.accentColor),
+                      const MyTouch(touch: "0"),
+                      const MyTouch(touch: "."),
+                      const MyTouch(touch: "00"),
+                      const MyTouch(touch: "=", color: MyColors.accentColor),
                       MyTouch(
                         touch: "",
                         onPressed: () {},
@@ -180,7 +180,7 @@ class MyTouch extends StatelessWidget {
           style: TextStyle(
             color: color ?? MyColors.primaryColor,
             fontWeight: FontWeight.w700,
-            fontSize: 24,
+            fontSize: 18,
           ),
         ),
       ),
