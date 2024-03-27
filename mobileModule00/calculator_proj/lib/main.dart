@@ -234,7 +234,7 @@ class MyTouch extends StatelessWidget {
           style: TextStyle(
             color: color ?? MyColors.primaryColor,
             fontWeight: FontWeight.w700,
-            fontSize: 24,
+            fontSize: 18,
           ),
         ),
       ),
