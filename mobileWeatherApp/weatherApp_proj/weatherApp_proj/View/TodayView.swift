@@ -8,15 +8,19 @@
 import SwiftUI
 
 struct TodayView: View {
+    var searchLocation: String
+    
     var body: some View {
-        NavigationView {
+        VStack {
             Text("Today")
                 .font(.title)
                 .bold()
+            Text(searchLocation)
+                .font(.title2)
         }
     }
 }
 
 #Preview {
-    TodayView()
+    TodayView(searchLocation: "Montréal")
 }

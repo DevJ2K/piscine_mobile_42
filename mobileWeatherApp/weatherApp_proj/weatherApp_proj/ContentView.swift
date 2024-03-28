@@ -40,7 +40,7 @@ struct ContentView: View {
             
             
             HStack {
-                if (showSearchBar) {
+                if (showSearchBar) { // The search bar
                     Image(systemName: "magnifyingglass")
                     TextField("Search", text: $searchText)
                     Button(action: {
@@ -51,23 +51,36 @@ struct ContentView: View {
                         Image(systemName: "xmark").foregroundStyle(.black)
                     })
                 } else {
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            searchText = ""
-                            showSearchBar = true
-                        }
-                    }, label: {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundStyle(.black)
-                            .padding(10)
-                    })
-//                    .background(Color.white)
-//                    .clipShape(Circle())
+                    
+                    HStack {
+                        Button(action: {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                searchText = ""
+                                showSearchBar = true
+                            }
+                        }, label: {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundStyle(.black)
+                                .padding(10)
+                        })
+                        Button(action: {
+                            //                            withAnimation(.easeInOut(duration: 0.2)) {
+                            searchText = "Geolocation"
+                            //                            }
+                        }, label: {
+                            Image(systemName: "location")
+                                .foregroundStyle(.black)
+                                .padding(10)
+                        })
+                    }
+                    
+                    //                    .background(Color.white)
+                    //                    .clipShape(Circle())
                 }
             }
             .padding(showSearchBar ? 10 : 0)
             .background(Color.white)
-//            .clipShape(Circle())
+            //            .clipShape(Circle())
             .cornerRadius(20)
         }
         //        .padding(.top, (UIApplication.shared.windows.first?.safeAreaInsets.top)! + 15)
@@ -82,7 +95,7 @@ struct ContentView: View {
             //                    .background(Color.gray.opacity(0.2))
             //                    .cornerRadius(8)
             //            }
-            CurrentlyView()
+            CurrentlyView(searchLocation: searchText)
                 .navigationTitle("Currently")
                 .tabItem {
                     VStack {
@@ -91,7 +104,7 @@ struct ContentView: View {
                     }
                 }
                 .tag(Tab.currently)
-            TodayView()
+            TodayView(searchLocation: searchText)
                 .tabItem {
                     VStack {
                         Image(systemName: "calendar.day.timeline.left")
@@ -100,7 +113,7 @@ struct ContentView: View {
                     
                 }
                 .tag(Tab.today)
-            WeeklyView()
+            WeeklyView(searchLocation: searchText)
                 .tabItem {
                     VStack {
                         Image(systemName: "calendar")
@@ -116,11 +129,11 @@ struct ContentView: View {
         }
         //        .tabViewStyle(.page)
         .tabViewStyle(.page(indexDisplayMode: .never))
-//        .edgesIgnoringSafeArea(.top)
+        //        .edgesIgnoringSafeArea(.top)
         //        .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
         //        .accentColor(.purple)
     }
-   
+    
     
 }
 

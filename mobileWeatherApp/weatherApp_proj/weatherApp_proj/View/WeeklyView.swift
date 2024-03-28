@@ -8,15 +8,19 @@
 import SwiftUI
 
 struct WeeklyView: View {
+    var searchLocation: String
+    
     var body: some View {
-//        NavigationView {
+        VStack {
             Text("Weekly")
                 .font(.title)
                 .bold()
-//        }
+            Text(searchLocation)
+                .font(.title2)
+        }
     }
 }
 
 #Preview {
-    WeeklyView()
+    WeeklyView(searchLocation: "Paris")
 }
