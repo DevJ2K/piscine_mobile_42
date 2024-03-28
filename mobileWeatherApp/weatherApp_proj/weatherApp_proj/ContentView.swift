@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var searchText = ""
     @State private var showSearchBar = false
+    @FocusState private var focusedSearch: Bool?
     @State private var selectedTab: Tab = .currently
     
     private var tabName: String {
@@ -34,16 +35,19 @@ struct ContentView: View {
                 Text(tabName)
                     .fontWeight(.bold)
                     .font(.title)
+                    .foregroundStyle(.white)
                 Spacer()
             }
-            //                .foregroundStyle(.white)
             
             
             HStack {
                 if (showSearchBar) { // The search bar
                     Image(systemName: "magnifyingglass")
                     TextField("Search", text: $searchText)
+                        .focused($focusedSearch, equals: true)
+                        .foregroundStyle(.blue, .red)
                     Button(action: {
+                        focusedSearch = false
                         withAnimation(.easeInOut(duration: 0.2)) {
                             showSearchBar = false
                         }
@@ -57,6 +61,7 @@ struct ContentView: View {
                             withAnimation(.easeInOut(duration: 0.2)) {
                                 searchText = ""
                                 showSearchBar = true
+                                focusedSearch = true
                             }
                         }, label: {
                             Image(systemName: "magnifyingglass")
@@ -83,10 +88,10 @@ struct ContentView: View {
             //            .clipShape(Circle())
             .cornerRadius(20)
         }
-        //        .padding(.top, (UIApplication.shared.windows.first?.safeAreaInsets.top)! + 15)
+        .padding(.top, 15)
         .padding(.horizontal)
-        .padding(.bottom, 10)
-        .background(Color.purple)
+        .padding(.bottom, 8)
+        .background(Color.cyan)
         
         TabView(selection: $selectedTab) {
             //            HStack {
