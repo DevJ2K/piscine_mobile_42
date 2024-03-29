@@ -54,7 +54,7 @@ struct ContentView: View {
                 if (showSearchBar == false) {
                     Text(tabName)
                         .fontWeight(.bold)
-                        .font(.title)
+                        .font(.largeTitle)
                         .foregroundStyle(colorScheme == .dark ? .white : .black)
                     Spacer()
                 }
@@ -173,7 +173,7 @@ struct ContentView: View {
             }
         }
 //        .ignoresSafeArea(.all)
-//        .padding(.top)
+        .padding(.top)
 //        .padding(.bottom)
         .background(colorScheme == .dark
                     ? LinearGradient(
