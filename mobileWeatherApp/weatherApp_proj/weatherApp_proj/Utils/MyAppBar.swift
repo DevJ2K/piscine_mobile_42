@@ -15,17 +15,18 @@ enum Tab: String, CaseIterable {
 
 struct MyAppBar: View {
     @Binding var selectedTab: Tab
+    @Environment (\.colorScheme) var colorScheme
     //    private var fillImage: String {
     //        selectedTab.rawValue + ".fill"
     //    }
     private var tabColor: Color {
         switch selectedTab {
         case .currently:
-            return .blue
+            return colorScheme == .dark ? .blue : .indigo
         case .today:
-            return .green
+            return colorScheme == .dark ? .green : Color(red: 0, green: 0.65, blue: 0)
         case .weekly:
-            return .yellow
+            return colorScheme == .dark ? .yellow : Color(red: 240/255, green: 120/255, blue: 25/255)
         }
     }
     
@@ -48,14 +49,14 @@ struct MyAppBar: View {
                     if (selectedTab == tab) {
                         VStack(spacing: 6) {
                             Image(systemName: tab.rawValue)
-                                .foregroundStyle(selectedTab == tab ? tabColor : .secondary)
-                                .bold(selectedTab == tab)
-                                .scaleEffect(selectedTab == tab ? 1.25 : 1.0)
+                                .foregroundStyle(tabColor)
+                                .bold()
+                                .scaleEffect(1.25)
                                 .font(.system(size: 16))
                                 .onTapGesture {
-                                    withAnimation(.easeIn(duration: 0.2)) {
+//                                    withAnimation(.easeIn(duration: 0.2)) {
                                         selectedTab = tab
-                                    }
+//                                    }
                                 }
                             
                             Text(tabName)
@@ -66,12 +67,12 @@ struct MyAppBar: View {
                     } else {
                         ZStack {
                             Image(systemName: tab.rawValue)
-                                .foregroundStyle(selectedTab == tab ? tabColor : .secondary)
+                                .foregroundStyle(.secondary)
                                 .bold(selectedTab == tab)
-                                .scaleEffect(selectedTab == tab ? 1.25 : 1.0)
+                                .scaleEffect(1.0)
                                 .font(.system(size: 16))
                                 .onTapGesture {
-//                                    withAnimation(.easeIn(duration: 0.2)) {
+//                                    withAnimation(.linear(duration: 0.2)) {
                                         selectedTab = tab
 //                                    }
                                 }
@@ -92,14 +93,28 @@ struct MyAppBar: View {
         .frame(width: nil, height: 60)
         .background(.thinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 32))
+        .shadow(color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.1), radius: 6, x: 2, y: 4)
         .padding()
     }
 }
 
 #Preview {
-    VStack {
-        MyAppBar(selectedTab: .constant(.currently))
-        MyAppBar(selectedTab: .constant(.today))
-        MyAppBar(selectedTab: .constant(.weekly))
-    }
+    ContentView()
 }
+
+//#Preview {
+//    VStack {
+//        Spacer()
+//        MyAppBar(selectedTab: .constant(.currently))
+//        MyAppBar(selectedTab: .constant(.today))
+//        MyAppBar(selectedTab: .constant(.weekly))
+////        Spacer()
+//    }
+//    .padding(.bottom, 16)
+//    .background(false == true
+//                ? LinearGradient(
+//                    gradient: Gradient(colors: [.purple.opacity(0.2), .indigo.opacity(0.8)]), startPoint: .top, endPoint: .bottom)
+//                : LinearGradient(
+//                    gradient: Gradient(colors: [.purple.opacity(0.7), .indigo.opacity(0.8)]), startPoint: .top, endPoint: .bottom))
+//    .ignoresSafeArea()
+//}
