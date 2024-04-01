@@ -7,10 +7,14 @@
 
 import SwiftUI
 
+
+
+
 struct ContentView: View {
     @State private var lastSearch: String = ""
+    @State private var cities = [City]()
     @State private var searchText = ""
-    @State private var showSearchBar = true
+    @State private var showSearchBar = false
     @FocusState private var focusedSearch: Bool?
     @State private var selectedTab: Tab = .currently
     @Environment (\.colorScheme) var colorScheme
@@ -78,6 +82,15 @@ struct ContentView: View {
                             .onSubmit {
                                 sendSearchLocation()
                             }
+                            .onChange(of: searchText) { newValue in
+                                if (searchText.isEmpty == false) {
+                                    Task {
+                                    
+                                        cities = await fetchCity(name: searchText)
+                                        print(searchText)
+                                    }
+                                }
+                            }
                         Button(action: {
                             if (searchText.isEmpty == false) {
                                 searchText = ""
@@ -135,13 +148,24 @@ struct ContentView: View {
             
             
             if (showSearchBar) {
-                List {
-                    Text("Yo");
-                    Text("Yo");
-                    Text("Yo");
-                    Text("Yo");
-                    Text("Yo");
+                List(cities, id: \.id) { city in
+                    HStack {
+                        Text(city.name)
+                            .bold()
+                        Text((city.admin1 ?? ""))
+                        if let country = city.country {
+                            Text(", " + country)
+                        }
+
+                    }
                 }
+//                List {
+//                    Text("Yo");
+//                    Text("Yo");
+//                    Text("Yo");
+//                    Text("Yo");
+//                    Text("Yo");
+//                }
 //                ScrollView {
 //                    Text("Yo");
 //                    Text("Yo");
@@ -161,6 +185,7 @@ struct ContentView: View {
                         VStack {
                             Image(systemName: "sun.min")
                             Text("Currently")
+                            
                         }
                     }
                     .tag(Tab.currently)
