@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E42784752BBB21450095FB12 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42784742BBB21450095FB12 /* LocationManager.swift */; };
 		E42AA0E52BB6DC6D0091B4C5 /* weatherAppV2projApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42AA0E42BB6DC6D0091B4C5 /* weatherAppV2projApp.swift */; };
 		E42AA0E72BB6DC6D0091B4C5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42AA0E62BB6DC6D0091B4C5 /* ContentView.swift */; };
 		E42AA0E92BB6DC700091B4C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E42AA0E82BB6DC700091B4C5 /* Assets.xcassets */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E42784742BBB21450095FB12 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		E42AA0E12BB6DC6D0091B4C5 /* weatherAppV2proj.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = weatherAppV2proj.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E42AA0E42BB6DC6D0091B4C5 /* weatherAppV2projApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = weatherAppV2projApp.swift; sourceTree = "<group>"; };
 		E42AA0E62BB6DC6D0091B4C5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 		E42AA0E32BB6DC6D0091B4C5 /* weatherAppV2proj */ = {
 			isa = PBXGroup;
 			children = (
+				E42784742BBB21450095FB12 /* LocationManager.swift */,
 				E481A9B12BB6DDD3005C6DD0 /* Utils */,
 				E481A9B02BB6DDCC005C6DD0 /* Views */,
 				E42AA0E42BB6DC6D0091B4C5 /* weatherAppV2projApp.swift */,
@@ -168,6 +171,7 @@
 				E42AA0E72BB6DC6D0091B4C5 /* ContentView.swift in Sources */,
 				E481A9B52BB6DF88005C6DD0 /* CurrentlyView.swift in Sources */,
 				E42AA0E52BB6DC6D0091B4C5 /* weatherAppV2projApp.swift in Sources */,
+				E42784752BBB21450095FB12 /* LocationManager.swift in Sources */,
 				E481A9B72BB6DF97005C6DD0 /* TodayView.swift in Sources */,
 				E481A9B32BB6DDFB005C6DD0 /* MyAppBar.swift in Sources */,
 				E481A9B92BB6DFA4005C6DD0 /* WeeklyView.swift in Sources */,
