@@ -13,8 +13,9 @@ import SwiftUI
 struct ContentView: View {
     @State private var lastSearch: String = ""
     @State private var cities = [City]()
+    @State private var searchCity: City?
     @State private var searchText = ""
-    @State private var showSearchBar = false
+    @State private var showSearchBar = true
     @FocusState private var focusedSearch: Bool?
     @State private var selectedTab: Tab = .currently
     @Environment (\.colorScheme) var colorScheme
@@ -37,6 +38,10 @@ struct ContentView: View {
         UITabBar.appearance().isHidden = true
     }
     
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+    
     func sendSearchLocation() -> Void {
         focusedSearch = false
         withAnimation(.easeInOut(duration: 0.2)) {
@@ -48,8 +53,7 @@ struct ContentView: View {
     }
     func cancelSearchLocation() -> Void {
         // Hide keyboard
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        
+        hideKeyboard()
         // Wait for the keyboard to hide before performing animation
         //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
         withAnimation(.easeInOut(duration: 0.2)) {
@@ -80,15 +84,18 @@ struct ContentView: View {
                         TextField("Search", text: $searchText)
                             .focused($focusedSearch, equals: true)
                             .onSubmit {
-                                sendSearchLocation()
+                                //                                sendSearchLocation()
+                                hideKeyboard()
                             }
                             .onChange(of: searchText) { newValue in
                                 if (searchText.isEmpty == false) {
                                     Task {
-                                    
+                                        
                                         cities = await fetchCity(name: searchText)
                                         print(searchText)
                                     }
+                                } else {
+                                    cities = []
                                 }
                             }
                         Button(action: {
@@ -127,6 +134,7 @@ struct ContentView: View {
                             Button(action: {
                                 searchText = "Geolocation"
                                 lastSearch = searchText
+                                searchCity = LocationManager.shared.currentLocationCity
                                 LocationManager.shared.requestLocation()
                             }, label: {
                                 Image(systemName: "location")
@@ -149,37 +157,30 @@ struct ContentView: View {
             
             if (showSearchBar) {
                 List(cities, id: \.id) { city in
-                    HStack {
-                        Text(city.name)
-                            .bold()
-                        Text((city.admin1 ?? ""))
-                        if let country = city.country {
-                            Text(", " + country)
+                    Button(action: {
+                        print(city.id)
+                    }) {
+                        HStack(spacing: 0) {
+                            Image(systemName: "building.2")
+                                .padding(.trailing, 16)
+                            Text(city.name)
+                                .bold()
+                            if let region = city.admin1 {
+                                Text(" \(region)")
+                            }
+                            if let country = city.country {
+                                Text(", " + country)
+                            }
                         }
-
                     }
+                    .foregroundStyle(.primary)
+                    .padding()
                 }
-//                List {
-//                    Text("Yo");
-//                    Text("Yo");
-//                    Text("Yo");
-//                    Text("Yo");
-//                    Text("Yo");
-//                }
-//                ScrollView {
-//                    Text("Yo");
-//                    Text("Yo");
-//                    Text("Yo");
-//                    Text("Yo");
-//                    Text("Yo");
-//                }
-//                .background(.red)
-//                .ignoresSafeArea(.all)
             } else {
                 TabView(selection: $selectedTab) {
                     CurrentlyView(searchLocation: locationManager.location != nil
                                   ? "\(locationManager.location!.latitude) \(locationManager.location!.longitude)"
-                                  : "undefined")
+                                  : "Geolocation is not available, please enable it in your App settings.")
                     .navigationTitle("Currently")
                     .tabItem {
                         VStack {

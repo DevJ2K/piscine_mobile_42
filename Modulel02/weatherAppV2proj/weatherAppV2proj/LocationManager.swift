@@ -12,6 +12,7 @@ import CoreLocationUI
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     //    @Published var location: CLLocationCoordinate2D?
     @Published var location: CLLocationCoordinate2D?
+    @Published var currentLocationCity: City?
     
     static let shared = LocationManager()
     
@@ -57,6 +58,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         print("HERE !")
         guard let latestLocation = locations.first else { return }
         self.location = latestLocation.coordinate
+        self.currentLocationCity?.name = "My Location"
+        self.currentLocationCity?.latitude = latestLocation.coordinate.latitude
+        self.currentLocationCity?.longitude = latestLocation.coordinate.longitude
         locationManager.stopUpdatingLocation()
         print(self.location ?? "Empty")
         
