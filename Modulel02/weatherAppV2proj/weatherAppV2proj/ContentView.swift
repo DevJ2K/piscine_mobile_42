@@ -15,7 +15,7 @@ struct ContentView: View {
     @State private var cities = [City]()
     @State private var searchCity: City?
     @State private var searchText = ""
-    @State private var showSearchBar = true
+    @State private var showSearchBar = false
     @FocusState private var focusedSearch: Bool?
     @State private var selectedTab: Tab = .currently
     @Environment (\.colorScheme) var colorScheme
@@ -185,7 +185,8 @@ struct ContentView: View {
                         searchText = ""
                         searchCity = city
                         focusedSearch = false
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        hideKeyboard()
+                        withAnimation(.easeInOut(duration: 0.3)) {
                             showSearchBar = false
                         }
                     }) {

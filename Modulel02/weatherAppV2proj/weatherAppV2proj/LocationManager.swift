@@ -34,6 +34,28 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         locationManager.requestWhenInUseAuthorization()
     }
     
+    func getPlace(for location: CLLocation,
+                  completion: @escaping (CLPlacemark?) -> Void) {
+        
+        let geocoder = CLGeocoder()
+        geocoder.reverseGeocodeLocation(location) { placemarks, error in
+            
+            guard error == nil else {
+                print("*** Error in \(#function): \(error!.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            guard let placemark = placemarks?[0] else {
+                print("*** Error in \(#function): placemark is nil")
+                completion(nil)
+                return
+            }
+            
+            completion(placemark)
+        }
+    }
+    
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         switch status {
@@ -57,13 +79,32 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         print("HERE !")
         guard let latestLocation = locations.first else { return }
+        
+        
         self.location = latestLocation.coordinate
+        
+        
         self.currentLocationCity?.name = "My Location"
         self.currentLocationCity?.latitude = latestLocation.coordinate.latitude
         self.currentLocationCity?.longitude = latestLocation.coordinate.longitude
         locationManager.stopUpdatingLocation()
         print(self.location ?? "Empty")
         
+        getPlace(for: latestLocation) { placemark in
+            guard let placemark = placemark else { return }
+            
+            var output = "Our location is:"
+            if let country = placemark.country {
+                output = output + "\n\(country)"
+            }
+            if let state = placemark.administrativeArea {
+                output = output + "\n\(state)"
+            }
+            if let town = placemark.locality {
+                output = output + "\n\(town)"
+            }
+            print(placemark.country! + " | " + placemark.administrativeArea! + " | " + placemark.locality! + " | " + placemark.timeZone!.identifier)
+        }
         //        DispatchQueue.main.async {
         //            self.location = latestLocation.coordinate
         //            print(self.location ?? "Empty")
