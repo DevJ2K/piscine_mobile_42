@@ -36,6 +36,7 @@ struct ContentView: View {
     
     init() {
         UITabBar.appearance().isHidden = true
+//        searchCity = locationManager.currentLocationCity
     }
     
     func hideKeyboard() {
@@ -133,8 +134,8 @@ struct ContentView: View {
                             Button(action: {
                                 searchText = "Geolocation"
                                 lastSearch = searchText
-                                searchCity = LocationManager.shared.currentLocationCity
-                                LocationManager.shared.requestLocation()
+                                locationManager.requestLocation()
+                                searchCity = locationManager.currentLocationCity
                             }, label: {
                                 Image(systemName: "location")
                                     .foregroundStyle(colorScheme == .dark ? .white : .black)
@@ -184,6 +185,8 @@ struct ContentView: View {
                         print("\(city.id) : \(city.longitude) | \(city.latitude)")
                         searchText = ""
                         searchCity = city
+//                        locationManage
+                        locationManager.currentLocationCity = city
                         focusedSearch = false
                         hideKeyboard()
                         withAnimation(.easeInOut(duration: 0.3)) {
@@ -204,8 +207,8 @@ struct ContentView: View {
                 //                }
             } else {
                 TabView(selection: $selectedTab) {
-                    CurrentlyView(searchLocation: locationManager.location != nil
-                                  ? "\(locationManager.location!.latitude) \(locationManager.location!.longitude)"
+                    CurrentlyView(searchLocation: locationManager.currentLocationCity != nil
+                                  ? "\(locationManager.currentLocationCity?.name ?? "Invalid") \(locationManager.currentLocationCity!.latitude) \(locationManager.currentLocationCity!.longitude)"
                                   : "Geolocation is not available, please enable it in your App settings.")
                     .navigationTitle("Currently")
                     .tabItem {
@@ -241,6 +244,10 @@ struct ContentView: View {
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
         }
+        .onAppear(perform: {
+            LocationManager.shared.requestLocation()
+            searchCity = locationManager.currentLocationCity
+        })
         .padding(.bottom, 20)
         .background(showSearchBar ?
                     LinearGradient(colors: [colorScheme == .dark ? .black : .white], startPoint: .center, endPoint: .center) :

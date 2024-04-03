@@ -18,7 +18,7 @@ struct City: Codable {
     var name: String
     var latitude: Double
     var longitude: Double
-    var elevation: Int
+    var elevation: Int?
     var timezone: String?
     var country: String?
     var admin1: String? //  Région

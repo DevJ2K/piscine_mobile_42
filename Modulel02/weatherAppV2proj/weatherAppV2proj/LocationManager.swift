@@ -13,6 +13,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     //    @Published var location: CLLocationCoordinate2D?
     @Published var location: CLLocationCoordinate2D?
     @Published var currentLocationCity: City?
+    private var userLocStatus: CLAuthorizationStatus?
     
     static let shared = LocationManager()
     
@@ -32,6 +33,11 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func requestLocation() {
         locationManager.requestWhenInUseAuthorization()
+        if (userLocStatus != nil) {
+            if (userLocStatus == .authorizedWhenInUse || userLocStatus == .authorizedAlways) {
+                locationManager.startUpdatingLocation()
+            }
+        }
     }
     
     func getPlace(for location: CLLocation,
@@ -58,6 +64,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        userLocStatus = status
         switch status {
         case .notDetermined:
             print("DEBUG : Not determined")
@@ -77,38 +84,37 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("HERE !")
+        print("STARTING FILL USER LOCATION !")
         guard let latestLocation = locations.first else { return }
+        locationManager.stopUpdatingLocation()
         
         
         self.location = latestLocation.coordinate
         
         
-        self.currentLocationCity?.name = "My Location"
-        self.currentLocationCity?.latitude = latestLocation.coordinate.latitude
-        self.currentLocationCity?.longitude = latestLocation.coordinate.longitude
-        locationManager.stopUpdatingLocation()
-        print(self.location ?? "Empty")
+        self.currentLocationCity = City(id: 1, name: "My Location", latitude: latestLocation.coordinate.latitude, longitude: latestLocation.coordinate.longitude)
+        
         
         getPlace(for: latestLocation) { placemark in
             guard let placemark = placemark else { return }
+            if let cityName = placemark.locality {
+                self.currentLocationCity?.name = cityName
+            }
             
-            var output = "Our location is:"
             if let country = placemark.country {
-                output = output + "\n\(country)"
+                self.currentLocationCity?.country = country
             }
+            
             if let state = placemark.administrativeArea {
-                output = output + "\n\(state)"
+                self.currentLocationCity?.admin1 = state
             }
-            if let town = placemark.locality {
-                output = output + "\n\(town)"
+        
+            if let cityTimezone = placemark.timeZone {
+                self.currentLocationCity?.timezone = cityTimezone.identifier
             }
             print(placemark.country! + " | " + placemark.administrativeArea! + " | " + placemark.locality! + " | " + placemark.timeZone!.identifier)
         }
-        //        DispatchQueue.main.async {
-        //            self.location = latestLocation.coordinate
-        //            print(self.location ?? "Empty")
-        //        }
+        print("ENDING FILL USER LOCATION !")
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
