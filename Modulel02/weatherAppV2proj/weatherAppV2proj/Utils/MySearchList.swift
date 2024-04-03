@@ -18,27 +18,17 @@ struct MySearchList: View {
                 HStack(spacing: 0) {
                     Image(systemName: "building.2")
                         .padding(.trailing, 16)
-                    Text(city.name)
-                        .bold()
-                    if let region = city.admin1 {
-                        Text(" \(region)")
-                    }
-                    if let country = city.country {
-                        Text(", " + country)
-                    }
-                }
-                
-                HStack(spacing: 0) {
-                    Image(systemName: "building.2")
-                        .padding(.trailing, 16)
-                    Text("**\(city.name)** \(city.admin1 ?? ""), \(city.country ?? "")")
+                    Text("**\(city.name)**")
+                        + Text((city.admin1 != nil) ? " \(city.admin1!)" : "")
+                        + Text((city.country != nil) ? ", \(city.country!)" : "")
+
                 }
             }
             .foregroundStyle(.primary)
             .padding()
         }
-        .background(.yellow)
 //        .listStyle(.plain)
+//        .background(.yellow)
 //        .ignoresSafeArea(.all)
     }
 }
@@ -48,7 +38,7 @@ struct MySearchList: View {
         City(id: 1, name: "New York", latitude: 64, longitude: 53, elevation: 62, country: "USA", admin1: "NY"),
         City(id: 2, name: "Los Angeles", latitude: 34, longitude: 118, elevation: 71, country: "USA", admin1: "CA"),
         City(id: 3, name: "London", latitude: 51, longitude: -0.1, elevation: 35, country: "UK", admin1: nil),
-        City(id: 4, name: "Paris", latitude: 48, longitude: 2, elevation: 35, country: "France", admin1: "île-de-france"),
+        City(id: 4, name: "Paris", latitude: 48, longitude: 2, elevation: 35, country: "France", admin1: "île-de-france mon gaaaars"),
         City(id: 5, name: "Tokyo", latitude: 35, longitude: 139, elevation: 43, country: "Japan", admin1: nil),
         City(id: 6, name: "Sydney", latitude: -33.9, longitude: 151.2, elevation: 3, country: "Australia", admin1: "NSW"),
         City(id: 7, name: "Rio de Janeiro", latitude: -22.9, longitude: -43.2, elevation: 6, country: "Brazil", admin1: "RJ"),

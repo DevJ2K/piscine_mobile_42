@@ -26,7 +26,7 @@ struct City: Codable {
 
 func fetchCity(name: String) async -> [City] {
     print("0")
-    let urlString = "https://geocoding-api.open-meteo.com/v1/search?name=\(name)&count=5&language=fr&format=json"
+    let urlString = "https://geocoding-api.open-meteo.com/v1/search?name=\(name)&count=5&language=en&format=json"
     print(urlString)
     // Create URL
     guard let url = URL(string: urlString) else {

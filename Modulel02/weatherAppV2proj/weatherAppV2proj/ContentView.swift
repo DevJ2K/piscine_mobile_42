@@ -84,7 +84,6 @@ struct ContentView: View {
                         TextField("Search", text: $searchText)
                             .focused($focusedSearch, equals: true)
                             .onSubmit {
-                                //                                sendSearchLocation()
                                 hideKeyboard()
                             }
                             .onChange(of: searchText) { newValue in
@@ -152,30 +151,56 @@ struct ContentView: View {
             .padding(.top, 15)
             .padding(.horizontal)
             .padding(.bottom, 12)
-            .background(showSearchBar ? Color.primary.opacity(0.2) : Color.clear)
+            .background(showSearchBar ? Color.primary.opacity(colorScheme == .dark ? 0.1 : 0.25) : Color.clear)
             
             
             if (showSearchBar) {
+                //                if (searchText.isEmpty && searchText.count == 1) {
+                //                    VStack {
+                //                    }
+                //                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                //                    .background(colorScheme == .dark ? .black : .white)
+                //                    .ignoresSafeArea(.all)
+                //                } else if (cities.count == 0 && searchText.count < 1) {
+                //                    VStack(spacing: 12) {
+                //                        Spacer()
+                //                        Image(systemName: "magnifyingglass")
+                //                            .foregroundStyle(.gray)
+                //                            .font(.system(size: 48))
+                //                        VStack(spacing: 2) {
+                //                            Text("**No Results**")
+                //                                .font(.title2)
+                //                            Text("No results found for \"\(searchText)\".")
+                //                                .foregroundStyle(.gray)
+                //                                .font(.subheadline)
+                //                        }
+                //                        Spacer()
+                //                    }
+                //                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                //                    .background(colorScheme == .dark ? .black : .white)
+                //                } else {
                 List(cities, id: \.id) { city in
                     Button(action: {
-                        print(city.id)
+                        print("\(city.id) : \(city.longitude) | \(city.latitude)")
+                        searchText = ""
+                        searchCity = city
+                        focusedSearch = false
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showSearchBar = false
+                        }
                     }) {
                         HStack(spacing: 0) {
                             Image(systemName: "building.2")
                                 .padding(.trailing, 16)
-                            Text(city.name)
-                                .bold()
-                            if let region = city.admin1 {
-                                Text(" \(region)")
-                            }
-                            if let country = city.country {
-                                Text(", " + country)
-                            }
+                            Text("**\(city.name)**")
+                            + Text((city.admin1 != nil) ? " \(city.admin1!)" : "")
+                            + Text((city.country != nil) ? ", \(city.country!)" : "")
+                            
                         }
                     }
                     .foregroundStyle(.primary)
-                    .padding()
                 }
+                //                }
             } else {
                 TabView(selection: $selectedTab) {
                     CurrentlyView(searchLocation: locationManager.location != nil
@@ -196,7 +221,6 @@ struct ContentView: View {
                                 Image(systemName: "calendar.day.timeline.left")
                                 Text("Today")
                             }
-                            
                         }
                         .tag(Tab.today)
                     WeeklyView(searchLocation: searchText)
@@ -217,12 +241,12 @@ struct ContentView: View {
             }
         }
         .padding(.bottom, 20)
-        .background(LinearGradient(
-            gradient: Gradient(colors: [.purple.opacity(colorScheme == .dark ? 0.2 : 0.7), .indigo.opacity(0.8)]), startPoint: .top, endPoint: .bottom))
+        .background(showSearchBar ?
+                    LinearGradient(colors: [colorScheme == .dark ? .black : .white], startPoint: .center, endPoint: .center) :
+                        LinearGradient(
+                            gradient: Gradient(colors: [.purple.opacity(colorScheme == .dark ? 0.2 : 0.7), .indigo.opacity(0.8)]), startPoint: .top, endPoint: .bottom))
         .ignoresSafeArea(edges: .bottom)
     }
-    
-    
 }
 
 #Preview {
