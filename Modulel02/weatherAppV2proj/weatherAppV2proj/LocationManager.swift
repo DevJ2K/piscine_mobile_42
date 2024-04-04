@@ -35,6 +35,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func requestLocation() {
         locationManager.requestWhenInUseAuthorization()
+        print("Geolocation : \(userLocStatus.debugDescription)")
         if (userLocStatus != nil) {
             if (userLocStatus == .authorizedWhenInUse || userLocStatus == .authorizedAlways) {
                 locationManager.startUpdatingLocation()
@@ -46,9 +47,14 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
     func updateCity(city: City) async {
-        cityLocation = city
+        DispatchQueue.main.async {
+            self.cityLocation = city
+        }
         if (cityLocation != nil) {
-            cityInfo = await fetchCityInfo(city: cityLocation!)
+            let cityInfoFetching = await fetchCityInfo(city: cityLocation!)
+            DispatchQueue.main.async {
+                self.cityInfo = cityInfoFetching
+            }
             
         } else {
             print("Invalid City")
@@ -88,10 +94,13 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         case .denied:
             print("DEBUG : Denied")
         case .authorizedAlways:
+            locationManager.startUpdatingLocation()
             print("DEBUG : Auth always")
         case .authorizedWhenInUse:
+            locationManager.startUpdatingLocation()
             print("DEBUG : Auth when in use")
         case .authorized:
+            locationManager.startUpdatingLocation()
             print("DEBUG : One time")
         @unknown default:
             break
@@ -128,11 +137,13 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                 print("ENDING FETCHING REAL POS INFO :")
                 
                 Task {
-                    self.cityInfo = await fetchCityInfo(city: self.cityLocation!)
-                    print(self.cityLocation ?? "cityLocation nil")
-                    print(self.cityInfo ?? "cityInfo nil")
+                    let fetchedCityInfo = await fetchCityInfo(city: self.cityLocation!)
+                    DispatchQueue.main.async {
+                        self.cityInfo = fetchedCityInfo
+                        print(self.cityLocation ?? "cityLocation nil")
+                        print(self.cityInfo ?? "cityInfo nil")
+                    }
                 }
-                
                 print("========================================")
             }
         }

@@ -27,9 +27,13 @@ struct WeeklyView: View {
                     ForEach(0 ..< cityInfo!.daily!.time.count, id: \.self) { i in
                         HStack {
                             Text("\(cityInfo!.daily!.time[i].prefix(10))")
+                            Spacer()
                             Text("\(String(format: "%.1f", cityInfo!.daily!.temperature_2m_min[i]))°C")
                             Text("\(String(format: "%.1f", cityInfo!.daily!.temperature_2m_max[i]))°C")
+//                            Spacer()
                             Text("\(getWeatherDescription(weather_code: cityInfo!.daily!.weather_code[i])?.dayDescription ?? "")")
+                            Spacer()
+//                                .multilineTextAlignment(.center)
                         }
 //                        Text("\(value)")
                     }
@@ -38,6 +42,7 @@ struct WeeklyView: View {
                 Text("Invalid data")
             }
         }
+        .padding()
     }
 }
 

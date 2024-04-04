@@ -28,8 +28,11 @@ struct TodayView: View {
                         ForEach(0 ..< min(24, cityInfo!.hourly!.time.count), id: \.self) { i in
                             HStack {
                                 Text("\(cityInfo!.hourly!.time[i].suffix(5))")
+                                Spacer()
                                 Text("\(String(format: "%.1f", cityInfo!.hourly!.temperature_2m[i]))°C")
+                                Spacer()
                                 Text("\(getWeatherDescription(weather_code: cityInfo!.hourly!.weather_code[i])?.dayDescription ?? "")")
+                                Spacer()
                                 Text("\(String(format: "%.1f", cityInfo!.hourly!.wind_speed_10m[i]))km/h")
                             }
                             //                        Text("\(value)")
@@ -39,6 +42,7 @@ struct TodayView: View {
                     Text("Invalid data")
                 }
             }
+            .padding()
         }
 //        .background(.red)
     }

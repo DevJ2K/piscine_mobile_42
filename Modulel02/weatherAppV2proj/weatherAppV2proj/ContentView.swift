@@ -11,7 +11,6 @@ import SwiftUI
 
 
 struct ContentView: View {
-    @State private var lastSearch: String = ""
     @State private var cities = [City]()
     @State private var searchText = ""
     @State private var showSearchBar = false
@@ -48,7 +47,6 @@ struct ContentView: View {
         withAnimation(.easeInOut(duration: 0.2)) {
             showSearchBar = false
         }
-        searchText = lastSearch
         focusedSearch = false
         //        }
     }
@@ -79,11 +77,17 @@ struct ContentView: View {
                                 if (searchText.isEmpty == false) {
                                     Task {
                                         
-                                        cities = await fetchCity(name: searchText)
-                                        print(searchText)
+                                        let fetchedCities = await fetchCity(name: searchText)
+                                        DispatchQueue.main.async {
+                                            cities = fetchedCities
+                                        }
                                     }
+                                    
                                 } else {
-                                    cities = []
+                                    DispatchQueue.main.async {
+                                        cities = []
+                                    }
+                                    //                                    cities = []
                                 }
                             }
                         Button(action: {
@@ -109,7 +113,6 @@ struct ContentView: View {
                             Button(action: {
                                 noAnimationDisplay = true
                                 withAnimation(.easeInOut(duration: 0.2)) {
-                                    lastSearch = searchText
                                     searchText = ""
                                     showSearchBar = true
                                     focusedSearch = true
@@ -121,17 +124,17 @@ struct ContentView: View {
                                     .bold()
                             })
                             Button(action: {
-                                searchText = "Geolocation"
-                                lastSearch = searchText
                                 locationManager.requestLocation()
                                 if (locationManager.cityLocation != nil) {
+                                    print("Geolocation pressed and cityLocation exist !")
                                     Task {
-                                        locationManager.cityInfo = await fetchCityInfo(city: locationManager.cityLocation!)
-                                        //                                        await print(fetchCityInfo(city: locationManager.cityLocation!) ?? "Empty")
+                                        let cityInfoFetching = await fetchCityInfo(city: locationManager.cityLocation!)
+                                        locationManager.cityInfo = cityInfoFetching
                                     }
+                                } else {
+                                    
+                                    print("Geolocation pressed but cityLocation not exist !")
                                 }
-                                
-                                
                             }, label: {
                                 Image(systemName: "location")
                                     .foregroundStyle(colorScheme == .dark ? .white : .black)
@@ -152,57 +155,67 @@ struct ContentView: View {
             
             
             if (noAnimationDisplay) {
-                                if (searchText.isEmpty || searchText.count == 1) {
-                                    VStack {
-                                    }
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .background(colorScheme == .dark ? .black : .white)
-                                    .ignoresSafeArea(.all)
-                                } else if (cities.count == 0 && searchText.count > 1 && LocationManager.shared.isFetchingCity == false) {
-                                    VStack(spacing: 12) {
-                                        Spacer()
-                                        Image(systemName: "magnifyingglass")
-                                            .foregroundStyle(.gray)
-                                            .font(.system(size: 48))
-                                        VStack(spacing: 2) {
-                                            Text("**No Results**")
-                                                .font(.title2)
-                                            Text("No results found for \"\(searchText)\".")
-                                                .foregroundStyle(.gray)
-                                                .font(.subheadline)
-                                        }
-                                        Spacer()
-                                    }
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .background(colorScheme == .dark ? .black : .white)
-                                } else {
-                List(cities, id: \.id) { city in
-                    Button(action: {
-                        print("\(city.id) : \(city.longitude) | \(city.latitude)")
-                        searchText = ""
-                        Task {
-                            await locationManager.updateCity(city: city)
-                            print(locationManager.cityInfo ?? "City Info Empty !")
-                        }
-                        focusedSearch = false
-                        hideKeyboard()
-                        noAnimationDisplay = false
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            showSearchBar = false
-                        }
-                    }) {
-                        HStack(spacing: 0) {
-                            Image(systemName: "building.2")
-                                .padding(.trailing, 16)
-                            Text("**\(city.name)**")
-                            + Text((city.admin1 != nil) ? " \(city.admin1!)" : "")
-                            + Text((city.country != nil) ? ", \(city.country!)" : "")
-                            
-                        }
+                if (searchText.isEmpty || searchText.count == 1) {
+                    VStack {
                     }
-                    .foregroundStyle(.primary)
-                }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(colorScheme == .dark ? .black : .white)
+                    .ignoresSafeArea(.all)
+                } else if (cities.count == 0 && searchText.count > 1 && LocationManager.shared.isFetchingCity == false) {
+                    VStack(spacing: 12) {
+                        Spacer()
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(.gray)
+                            .font(.system(size: 48))
+                        VStack(spacing: 2) {
+                            Text("**No Results**")
+                                .font(.title2)
+                            Text("No results found for \"\(searchText)\".")
+                                .foregroundStyle(.gray)
+                                .font(.subheadline)
+                        }
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(colorScheme == .dark ? .black : .white)
+                } else {
+                    List(cities, id: \.id) { city in
+                        Button(action: {
+                            print("\(city.id) : \(city.longitude) | \(city.latitude)")
+                            searchText = ""
+                            
+                            locationManager.cityLocation = city
+                            if (locationManager.cityLocation != nil) {
+                                Task {
+                                    let cityInfoFetching = await fetchCityInfo(city: locationManager.cityLocation!)
+                                    locationManager.cityInfo = cityInfoFetching
+//                                    DispatchQueue.main.async {
+//                                        self.cityInfo = cityInfoFetching
+//                                    }
                                 }
+                                
+                            } else {
+                                print("Invalid City")
+                            }
+                            focusedSearch = false
+                            hideKeyboard()
+                            noAnimationDisplay = false
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                showSearchBar = false
+                            }
+                        }) {
+                            HStack(spacing: 0) {
+                                Image(systemName: "building.2")
+                                    .padding(.trailing, 16)
+                                Text("**\(city.name)**")
+                                + Text((city.admin1 != nil) ? " \(city.admin1!)" : "")
+                                + Text((city.country != nil) ? ", \(city.country!)" : "")
+                                
+                            }
+                        }
+                        .foregroundStyle(.primary)
+                    }
+                }
             } else {
                 TabView(selection: $selectedTab) {
                     if (locationManager.cityLocation != nil && locationManager.cityInfo != nil) {

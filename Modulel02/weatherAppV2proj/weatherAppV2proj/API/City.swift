@@ -26,7 +26,7 @@ struct City: Codable {
 
 struct CityInfo: Codable {
     var city: City?
-
+    
     // CURRENT TAB
     var current: CurrentData?
     // TODAY TAB
@@ -34,7 +34,7 @@ struct CityInfo: Codable {
     
     var daily: WeeklyData?
     // WEEKLY TAB
-//    var weatherDateList: [Array<AnyObject>]
+    //    var weatherDateList: [Array<AnyObject>]
 }
 
 struct CurrentData: Codable {
@@ -106,28 +106,28 @@ func getWeatherDescription(weather_code: Int8) -> WeatherInfo? {
 }
 
 func fetchCityInfo(city: City) async -> CityInfo? {
-//    var currentTabUrlString = "https://api.open-meteo.com/v1/forecast?latitude=\(city.latitude)&longitude=\(city.longitude)&current=temperature_2m,is_day,weather_code,wind_speed_10m"
-//    var todayTabUrlString = "https://api.open-meteo.com/v1/forecast?latitude=\(city.latitude)&longitude=\(city.longitude)&hourly=temperature_2m,weather_code,wind_speed_10m&forecast_days=1"
-//    var weeklyTabUrlString = "https://api.open-meteo.com/v1/forecast?latitude=\(city.latitude)&longitude=\(city.longitude)&daily=weather_code,temperature_2m_max,temperature_2m_min"
-//    
-//    if (city.timezone != nil) {
-//        currentTabUrlString += "&timezone=\(city.timezone!)"
-//        todayTabUrlString += "&timezone=\(city.timezone!)"
-//        weeklyTabUrlString += "&timezone=\(city.timezone!)"
-//    }
-//
-//    guard let currentTabUrl = URL(string: currentTabUrlString) else {
-//        print("CURRENT TAB : This request has failed please try with an other URL...")
-//        return nil
-//    }
-//    guard let todayTabUrl = URL(string: todayTabUrlString) else {
-//        print("TODAY TAB : This request has failed please try with an other URL...")
-//        return nil
-//    }
-//    guard let weeklyTabUrl = URL(string: weeklyTabUrlString) else {
-//        print("WEEKLY TAB : This request has failed please try with an other URL...")
-//        return nil
-//    }
+    //    var currentTabUrlString = "https://api.open-meteo.com/v1/forecast?latitude=\(city.latitude)&longitude=\(city.longitude)&current=temperature_2m,is_day,weather_code,wind_speed_10m"
+    //    var todayTabUrlString = "https://api.open-meteo.com/v1/forecast?latitude=\(city.latitude)&longitude=\(city.longitude)&hourly=temperature_2m,weather_code,wind_speed_10m&forecast_days=1"
+    //    var weeklyTabUrlString = "https://api.open-meteo.com/v1/forecast?latitude=\(city.latitude)&longitude=\(city.longitude)&daily=weather_code,temperature_2m_max,temperature_2m_min"
+    //
+    //    if (city.timezone != nil) {
+    //        currentTabUrlString += "&timezone=\(city.timezone!)"
+    //        todayTabUrlString += "&timezone=\(city.timezone!)"
+    //        weeklyTabUrlString += "&timezone=\(city.timezone!)"
+    //    }
+    //
+    //    guard let currentTabUrl = URL(string: currentTabUrlString) else {
+    //        print("CURRENT TAB : This request has failed please try with an other URL...")
+    //        return nil
+    //    }
+    //    guard let todayTabUrl = URL(string: todayTabUrlString) else {
+    //        print("TODAY TAB : This request has failed please try with an other URL...")
+    //        return nil
+    //    }
+    //    guard let weeklyTabUrl = URL(string: weeklyTabUrlString) else {
+    //        print("WEEKLY TAB : This request has failed please try with an other URL...")
+    //        return nil
+    //    }
     var cityInfo = CityInfo(city: city)
     var urlString = "https://api.open-meteo.com/v1/forecast?latitude=\(city.latitude)&longitude=\(city.longitude)&current=temperature_2m,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min"
     if (city.timezone != nil) {
@@ -143,13 +143,12 @@ func fetchCityInfo(city: City) async -> CityInfo? {
             print("Invalid status code != 200")
             return nil
         }
-        
         let decodedResponse = try JSONDecoder().decode(CityInfo.self, from: data)
         
         cityInfo.current = decodedResponse.current
         cityInfo.hourly = decodedResponse.hourly
         cityInfo.daily = decodedResponse.daily
-//        print("HERE !")
+        //        print("HERE !")
         return cityInfo
         
     } catch {
@@ -160,38 +159,44 @@ func fetchCityInfo(city: City) async -> CityInfo? {
 }
 
 func fetchCity(name: String) async -> [City] {
-//    print("0")
-    LocationManager.shared.isFetchingCity = true
+    //    print("0")
+    DispatchQueue.main.async {
+        LocationManager.shared.isFetchingCity = true
+    }
     let urlString = "https://geocoding-api.open-meteo.com/v1/search?name=\(name)&count=5&language=en&format=json"
     print(urlString)
     // Create URL
     guard let url = URL(string: urlString) else {
         print("This request has failed please try with an other URL...")
-        LocationManager.shared.isFetchingCity = false
+        DispatchQueue.main.async {
+            LocationManager.shared.isFetchingCity = false
+        }
         return []
     }
     
     // Fetch data from the URL
     do {
-//        print("1")
+        //        print("1")
         let (data, response) = try await URLSession.shared.data(from: url)
         guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
             print("Invalid status code != 200")
             LocationManager.shared.isFetchingCity = false
             return []
         }
-//        print("2")
+        //        print("2")
         // decode the data
         let decodedResponse = try JSONDecoder().decode(CityResult.self, from: data)
-//        print("3")
-//        print(decodedResponse.results)
-        LocationManager.shared.isFetchingCity = false
+        //        print("3")
+        //        print(decodedResponse.results)
+        DispatchQueue.main.async {
+            LocationManager.shared.isFetchingCity = false
+        }
         return decodedResponse.results
     } catch {
         print("Failed to fetch the data : \(error)")
+        DispatchQueue.main.async {
+            LocationManager.shared.isFetchingCity = false
+        }
+        return []
     }
-    
-//    print("4")
-    LocationManager.shared.isFetchingCity = false
-    return []
 }
