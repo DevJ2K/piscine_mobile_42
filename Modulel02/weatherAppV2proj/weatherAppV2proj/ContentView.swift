@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var cities = [City]()
     @State private var searchText = ""
     @State private var showSearchBar = false
+    @State private var noAnimationDisplay = false
     @FocusState private var focusedSearch: Bool?
     @State private var selectedTab: Tab = .currently
     @Environment (\.colorScheme) var colorScheme
@@ -43,6 +44,7 @@ struct ContentView: View {
         hideKeyboard()
         // Wait for the keyboard to hide before performing animation
         //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        noAnimationDisplay = false
         withAnimation(.easeInOut(duration: 0.2)) {
             showSearchBar = false
         }
@@ -105,6 +107,7 @@ struct ContentView: View {
                         
                         HStack {
                             Button(action: {
+                                noAnimationDisplay = true
                                 withAnimation(.easeInOut(duration: 0.2)) {
                                     lastSearch = searchText
                                     searchText = ""
@@ -145,34 +148,34 @@ struct ContentView: View {
             .padding(.top, 15)
             .padding(.horizontal)
             .padding(.bottom, 12)
-            .background(showSearchBar ? Color.primary.opacity(colorScheme == .dark ? 0.1 : 0.25) : Color.clear)
+            .background(noAnimationDisplay ? Color.primary.opacity(colorScheme == .dark ? 0.1 : 0.25) : Color.clear)
             
             
-            if (showSearchBar) {
-                //                if (searchText.isEmpty && searchText.count == 1) {
-                //                    VStack {
-                //                    }
-                //                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                //                    .background(colorScheme == .dark ? .black : .white)
-                //                    .ignoresSafeArea(.all)
-                //                } else if (cities.count == 0 && searchText.count < 1) {
-                //                    VStack(spacing: 12) {
-                //                        Spacer()
-                //                        Image(systemName: "magnifyingglass")
-                //                            .foregroundStyle(.gray)
-                //                            .font(.system(size: 48))
-                //                        VStack(spacing: 2) {
-                //                            Text("**No Results**")
-                //                                .font(.title2)
-                //                            Text("No results found for \"\(searchText)\".")
-                //                                .foregroundStyle(.gray)
-                //                                .font(.subheadline)
-                //                        }
-                //                        Spacer()
-                //                    }
-                //                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                //                    .background(colorScheme == .dark ? .black : .white)
-                //                } else {
+            if (noAnimationDisplay) {
+                                if (searchText.isEmpty && searchText.count == 1) {
+                                    VStack {
+                                    }
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(colorScheme == .dark ? .black : .white)
+                                    .ignoresSafeArea(.all)
+                                } else if (cities.count == 0 && searchText.count < 1) {
+                                    VStack(spacing: 12) {
+                                        Spacer()
+                                        Image(systemName: "magnifyingglass")
+                                            .foregroundStyle(.gray)
+                                            .font(.system(size: 48))
+                                        VStack(spacing: 2) {
+                                            Text("**No Results**")
+                                                .font(.title2)
+                                            Text("No results found for \"\(searchText)\".")
+                                                .foregroundStyle(.gray)
+                                                .font(.subheadline)
+                                        }
+                                        Spacer()
+                                    }
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(colorScheme == .dark ? .black : .white)
+                                } else {
                 List(cities, id: \.id) { city in
                     Button(action: {
                         print("\(city.id) : \(city.longitude) | \(city.latitude)")
@@ -198,7 +201,7 @@ struct ContentView: View {
                     }
                     .foregroundStyle(.primary)
                 }
-                //                }
+                                }
             } else {
                 TabView(selection: $selectedTab) {
                     CurrentlyView(cityInfo: locationManager.cityInfo)
@@ -235,13 +238,15 @@ struct ContentView: View {
 //                }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
-            MyAppBar(selectedTab: $selectedTab)
+                MyAppBar(selectedTab: $selectedTab)
+//                .ignoresSafeArea(.all)
         }
         .padding(.bottom, 20)
         .background(showSearchBar ?
                     LinearGradient(colors: [colorScheme == .dark ? .black : .white], startPoint: .center, endPoint: .center) :
                         LinearGradient(
                             gradient: Gradient(colors: [.purple.opacity(colorScheme == .dark ? 0.2 : 0.7), .indigo.opacity(0.8)]), startPoint: .top, endPoint: .bottom))
+//        .ignoresSafeArea(edges: noAnimationDisplay ? [] : .bottom)
         .ignoresSafeArea(edges: .bottom)
     }
 }
