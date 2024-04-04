@@ -12,19 +12,22 @@ struct CurrentlyView: View {
     
     var body: some View {
         VStack {
-            Text("Currently")
-                .font(.title)
-                .bold()
+//            Text("Currently")
+//                .font(.title)
+//                .bold()
             if (cityInfo?.city != nil && cityInfo?.current != nil) {
             
-                Text(cityInfo?.city?.admin1 ?? "")
+                Text(cityInfo?.city?.name ?? "Unknown")
                     .font(.title2)
-                Text(cityInfo?.city?.name ?? "")
+                Text(cityInfo?.city?.admin1 ?? "Unknown")
                     .font(.title2)
-                Text(cityInfo?.city?.country ?? "")
+                Text(cityInfo?.city?.country ?? "Unknown")
                     .font(.title2)
                 if (cityInfo?.current?.temperature_2m != nil) {
                     Text("\(String(format: "%.1f", cityInfo!.current!.temperature_2m))°C")
+                }
+                if (cityInfo?.current?.weather_code != nil) {
+                    Text("\(getWeatherDescription(weather_code: cityInfo!.current!.weather_code)?.dayDescription ?? "")")
                 }
                 if (cityInfo?.current?.wind_speed_10m != nil) {
                     Text("\(String(format: "%.1f", cityInfo!.current!.wind_speed_10m))km/h")

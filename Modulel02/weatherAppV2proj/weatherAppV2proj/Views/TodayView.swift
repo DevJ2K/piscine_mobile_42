@@ -13,21 +13,22 @@ struct TodayView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .center) {
-                Text("Today")
-                    .font(.title)
-                    .bold()
+//                Text("Today")
+//                    .font(.title)
+//                    .bold()
                 if (cityInfo?.city != nil && cityInfo?.current != nil) {
-                    Text(cityInfo?.city?.admin1 ?? "")
+                    Text(cityInfo?.city?.name ?? "Unknown")
                         .font(.title2)
-                    Text(cityInfo?.city?.name ?? "")
+                    Text(cityInfo?.city?.admin1 ?? "Unknown")
                         .font(.title2)
-                    Text(cityInfo?.city?.country ?? "")
+                    Text(cityInfo?.city?.country ?? "Unknown")
                         .font(.title2)
                     if (cityInfo?.hourly != nil) {
                         ForEach(0 ..< min(24, cityInfo!.hourly!.time.count), id: \.self) { i in
                             HStack {
                                 Text("\(cityInfo!.hourly!.time[i].suffix(5))")
                                 Text("\(String(format: "%.1f", cityInfo!.hourly!.temperature_2m[i]))°C")
+                                Text("\(getWeatherDescription(weather_code: cityInfo!.hourly!.weather_code[i])?.dayDescription ?? "")")
                                 Text("\(String(format: "%.1f", cityInfo!.hourly!.wind_speed_10m[i]))km/h")
                             }
                             //                        Text("\(value)")
@@ -38,6 +39,7 @@ struct TodayView: View {
                 }
             }
         }
+//        .background(.red)
     }
 }
 

@@ -127,10 +127,10 @@ struct ContentView: View {
                                 if (locationManager.cityLocation != nil) {
                                     Task {
                                         locationManager.cityInfo = await fetchCityInfo(city: locationManager.cityLocation!)
-//                                        await print(fetchCityInfo(city: locationManager.cityLocation!) ?? "Empty")
+                                        //                                        await print(fetchCityInfo(city: locationManager.cityLocation!) ?? "Empty")
                                     }
                                 }
-
+                                
                                 
                             }, label: {
                                 Image(systemName: "location")
@@ -152,30 +152,30 @@ struct ContentView: View {
             
             
             if (noAnimationDisplay) {
-                                if (searchText.isEmpty && searchText.count == 1) {
-                                    VStack {
-                                    }
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .background(colorScheme == .dark ? .black : .white)
-                                    .ignoresSafeArea(.all)
-                                } else if (cities.count == 0 && searchText.count < 1) {
-                                    VStack(spacing: 12) {
-                                        Spacer()
-                                        Image(systemName: "magnifyingglass")
-                                            .foregroundStyle(.gray)
-                                            .font(.system(size: 48))
-                                        VStack(spacing: 2) {
-                                            Text("**No Results**")
-                                                .font(.title2)
-                                            Text("No results found for \"\(searchText)\".")
-                                                .foregroundStyle(.gray)
-                                                .font(.subheadline)
-                                        }
-                                        Spacer()
-                                    }
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .background(colorScheme == .dark ? .black : .white)
-                                } else {
+                //                if (searchText.isEmpty || searchText.count == 1) {
+                //                    VStack {
+                //                    }
+                //                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                //                    .background(colorScheme == .dark ? .black : .white)
+                //                    .ignoresSafeArea(.all)
+                //                } else if (cities.count == 0 && searchText.count > 1) {
+                //                    VStack(spacing: 12) {
+                //                        Spacer()
+                //                        Image(systemName: "magnifyingglass")
+                //                            .foregroundStyle(.gray)
+                //                            .font(.system(size: 48))
+                //                        VStack(spacing: 2) {
+                //                            Text("**No Results**")
+                //                                .font(.title2)
+                //                            Text("No results found for \"\(searchText)\".")
+                //                                .foregroundStyle(.gray)
+                //                                .font(.subheadline)
+                //                        }
+                //                        Spacer()
+                //                    }
+                //                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                //                    .background(colorScheme == .dark ? .black : .white)
+                //                } else {
                 List(cities, id: \.id) { city in
                     Button(action: {
                         print("\(city.id) : \(city.longitude) | \(city.latitude)")
@@ -186,6 +186,7 @@ struct ContentView: View {
                         }
                         focusedSearch = false
                         hideKeyboard()
+                        noAnimationDisplay = false
                         withAnimation(.easeInOut(duration: 0.3)) {
                             showSearchBar = false
                         }
@@ -201,19 +202,19 @@ struct ContentView: View {
                     }
                     .foregroundStyle(.primary)
                 }
-                                }
+                //                }
             } else {
                 TabView(selection: $selectedTab) {
                     CurrentlyView(cityInfo: locationManager.cityInfo)
-                    .navigationTitle("Currently")
-                    .tabItem {
-                        VStack {
-                            Image(systemName: "sun.min")
-                            Text("Currently")
-                            
+                        .navigationTitle("Currently")
+                        .tabItem {
+                            VStack {
+                                Image(systemName: "sun.min")
+                                Text("Currently")
+                                
+                            }
                         }
-                    }
-                    .tag(Tab.currently)
+                        .tag(Tab.currently)
                     TodayView(cityInfo: locationManager.cityInfo)
                         .tabItem {
                             VStack {
@@ -233,20 +234,20 @@ struct ContentView: View {
                 }
                 .animation(nil, value: selectedTab)
                 .searchable(text: $searchText)
-//                .overlay(alignment: .bottom) {
-//                    MyAppBar(selectedTab: $selectedTab)
-//                }
+                //                .overlay(alignment: .bottom) {
+                //                    MyAppBar(selectedTab: $selectedTab)
+                //                }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
-                MyAppBar(selectedTab: $selectedTab)
-//                .ignoresSafeArea(.all)
+            MyAppBar(selectedTab: $selectedTab)
+            //                .ignoresSafeArea(.all)
         }
         .padding(.bottom, 20)
         .background(showSearchBar ?
                     LinearGradient(colors: [colorScheme == .dark ? .black : .white], startPoint: .center, endPoint: .center) :
                         LinearGradient(
                             gradient: Gradient(colors: [.purple.opacity(colorScheme == .dark ? 0.2 : 0.7), .indigo.opacity(0.8)]), startPoint: .top, endPoint: .bottom))
-//        .ignoresSafeArea(edges: noAnimationDisplay ? [] : .bottom)
+        //        .ignoresSafeArea(edges: noAnimationDisplay ? [] : .bottom)
         .ignoresSafeArea(edges: .bottom)
     }
 }

@@ -12,13 +12,13 @@ struct WeeklyView: View {
     
     var body: some View {
         VStack {
-            Text("Weekly")
-                .font(.title)
-                .bold()
+//            Text("Weekly")
+//                .font(.title)
+//                .bold()
             if (cityInfo?.city != nil && cityInfo?.current != nil) {
-                Text(cityInfo?.city?.admin1 ?? "")
-                    .font(.title2)
                 Text(cityInfo?.city?.name ?? "")
+                    .font(.title2)
+                Text(cityInfo?.city?.admin1 ?? "")
                     .font(.title2)
                 Text(cityInfo?.city?.country ?? "")
                     .font(.title2)
@@ -28,7 +28,6 @@ struct WeeklyView: View {
                             Text("\(cityInfo!.daily!.time[i].prefix(10))")
                             Text("\(String(format: "%.1f", cityInfo!.daily!.temperature_2m_min[i]))°C")
                             Text("\(String(format: "%.1f", cityInfo!.daily!.temperature_2m_max[i]))°C")
-                            
                             Text("\(getWeatherDescription(weather_code: cityInfo!.daily!.weather_code[i])?.dayDescription ?? "")")
                         }
 //                        Text("\(value)")
