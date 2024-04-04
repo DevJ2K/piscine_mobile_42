@@ -13,14 +13,11 @@ import SwiftUI
 struct ContentView: View {
     @State private var lastSearch: String = ""
     @State private var cities = [City]()
-    @State private var searchCity: City?
     @State private var searchText = ""
     @State private var showSearchBar = false
     @FocusState private var focusedSearch: Bool?
     @State private var selectedTab: Tab = .currently
     @Environment (\.colorScheme) var colorScheme
-    
-    //    @StateObject private var locationManager = LocationManager()
     @ObservedObject var locationManager = LocationManager.shared
     
     private var tabName: String {
@@ -36,24 +33,13 @@ struct ContentView: View {
     
     init() {
         UITabBar.appearance().isHidden = true
-//        searchCity = locationManager.currentLocationCity
     }
     
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
     
-    func sendSearchLocation() -> Void {
-        focusedSearch = false
-        withAnimation(.easeInOut(duration: 0.2)) {
-            showSearchBar = false
-        }
-        if (searchText.isEmpty) {
-            searchText = lastSearch
-        }
-    }
     func cancelSearchLocation() -> Void {
-        // Hide keyboard
         hideKeyboard()
         // Wait for the keyboard to hide before performing animation
         //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -135,7 +121,12 @@ struct ContentView: View {
                                 searchText = "Geolocation"
                                 lastSearch = searchText
                                 locationManager.requestLocation()
-                                searchCity = locationManager.currentLocationCity
+                                if (locationManager.cityLocation != nil) {
+                                    Task {
+                                    
+                                        await print(fetchCityInfo(city: locationManager.cityLocation!) ?? "Empty")
+                                    }
+                                }
                             }, label: {
                                 Image(systemName: "location")
                                     .foregroundStyle(colorScheme == .dark ? .white : .black)
@@ -184,9 +175,10 @@ struct ContentView: View {
                     Button(action: {
                         print("\(city.id) : \(city.longitude) | \(city.latitude)")
                         searchText = ""
-                        searchCity = city
-//                        locationManage
-                        locationManager.currentLocationCity = city
+                        Task {
+                            await locationManager.updateCity(city: city)
+                            print(locationManager.cityInfo ?? "City Info Empty !")
+                        }
                         focusedSearch = false
                         hideKeyboard()
                         withAnimation(.easeInOut(duration: 0.3)) {
@@ -207,9 +199,7 @@ struct ContentView: View {
                 //                }
             } else {
                 TabView(selection: $selectedTab) {
-                    CurrentlyView(searchLocation: locationManager.currentLocationCity != nil
-                                  ? "\(locationManager.currentLocationCity?.name ?? "Invalid") \(locationManager.currentLocationCity!.latitude) \(locationManager.currentLocationCity!.longitude)"
-                                  : "Geolocation is not available, please enable it in your App settings.")
+                    CurrentlyView(cityInfo: locationManager.cityInfo)
                     .navigationTitle("Currently")
                     .tabItem {
                         VStack {
@@ -219,7 +209,7 @@ struct ContentView: View {
                         }
                     }
                     .tag(Tab.currently)
-                    TodayView(searchLocation: searchText)
+                    TodayView(cityInfo: locationManager.cityInfo)
                         .tabItem {
                             VStack {
                                 Image(systemName: "calendar.day.timeline.left")
@@ -227,7 +217,7 @@ struct ContentView: View {
                             }
                         }
                         .tag(Tab.today)
-                    WeeklyView(searchLocation: searchText)
+                    WeeklyView(cityInfo: locationManager.cityInfo)
                         .tabItem {
                             VStack {
                                 Image(systemName: "calendar")
@@ -244,10 +234,6 @@ struct ContentView: View {
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
         }
-        .onAppear(perform: {
-            LocationManager.shared.requestLocation()
-            searchCity = locationManager.currentLocationCity
-        })
         .padding(.bottom, 20)
         .background(showSearchBar ?
                     LinearGradient(colors: [colorScheme == .dark ? .black : .white], startPoint: .center, endPoint: .center) :

@@ -111,7 +111,7 @@ struct MyAppBar: View {
 //        Spacer()
     }
     .padding(.bottom, 16)
-    .background(false == true
+    .background(2/2 == 2/1
                 ? LinearGradient(
                     gradient: Gradient(colors: [.purple.opacity(0.2), .indigo.opacity(0.8)]), startPoint: .top, endPoint: .bottom)
                 : LinearGradient(
