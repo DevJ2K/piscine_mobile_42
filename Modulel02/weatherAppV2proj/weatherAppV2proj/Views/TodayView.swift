@@ -11,29 +11,31 @@ struct TodayView: View {
     var cityInfo: CityInfo?
     
     var body: some View {
-        VStack {
-            Text("Today")
-                .font(.title)
-                .bold()
-            if (cityInfo?.city != nil && cityInfo?.current != nil) {                
-                Text(cityInfo?.city?.admin1 ?? "")
-                    .font(.title2)
-                Text(cityInfo?.city?.name ?? "")
-                    .font(.title2)
-                Text(cityInfo?.city?.country ?? "")
-                    .font(.title2)
-                if (cityInfo?.hourly != nil) {
-                    ForEach(0 ..< cityInfo!.hourly!.time.count, id: \.self) { i in
-                        HStack {
-                            Text("\(cityInfo!.hourly!.time[i].suffix(5))")
-                            Text("\(String(format: "%.1f", cityInfo!.hourly!.temperature_2m[i]))°C")
-                            Text("\(String(format: "%.1f", cityInfo!.hourly!.wind_speed_10m[i]))km/h")
+        ScrollView {
+            VStack(alignment: .center) {
+                Text("Today")
+                    .font(.title)
+                    .bold()
+                if (cityInfo?.city != nil && cityInfo?.current != nil) {
+                    Text(cityInfo?.city?.admin1 ?? "")
+                        .font(.title2)
+                    Text(cityInfo?.city?.name ?? "")
+                        .font(.title2)
+                    Text(cityInfo?.city?.country ?? "")
+                        .font(.title2)
+                    if (cityInfo?.hourly != nil) {
+                        ForEach(0 ..< min(24, cityInfo!.hourly!.time.count), id: \.self) { i in
+                            HStack {
+                                Text("\(cityInfo!.hourly!.time[i].suffix(5))")
+                                Text("\(String(format: "%.1f", cityInfo!.hourly!.temperature_2m[i]))°C")
+                                Text("\(String(format: "%.1f", cityInfo!.hourly!.wind_speed_10m[i]))km/h")
+                            }
+                            //                        Text("\(value)")
                         }
-//                        Text("\(value)")
                     }
+                } else {
+                    Text("Invalid data")
                 }
-            } else {
-                Text("Invalid data")
             }
         }
     }

@@ -123,10 +123,12 @@ struct ContentView: View {
                                 locationManager.requestLocation()
                                 if (locationManager.cityLocation != nil) {
                                     Task {
-                                    
-                                        await print(fetchCityInfo(city: locationManager.cityLocation!) ?? "Empty")
+                                        locationManager.cityInfo = await fetchCityInfo(city: locationManager.cityLocation!)
+//                                        await print(fetchCityInfo(city: locationManager.cityLocation!) ?? "Empty")
                                     }
                                 }
+
+                                
                             }, label: {
                                 Image(systemName: "location")
                                     .foregroundStyle(colorScheme == .dark ? .white : .black)
@@ -228,11 +230,12 @@ struct ContentView: View {
                 }
                 .animation(nil, value: selectedTab)
                 .searchable(text: $searchText)
-                .overlay(alignment: .bottom) {
-                    MyAppBar(selectedTab: $selectedTab)
-                }
+//                .overlay(alignment: .bottom) {
+//                    MyAppBar(selectedTab: $selectedTab)
+//                }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
+            MyAppBar(selectedTab: $selectedTab)
         }
         .padding(.bottom, 20)
         .background(showSearchBar ?

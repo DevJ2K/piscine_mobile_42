@@ -11,7 +11,6 @@ import CoreLocationUI
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     //    @Published var location: CLLocationCoordinate2D?
-    @Published var location: CLLocationCoordinate2D?
     @Published var cityLocation: City?
     @Published var cityInfo: CityInfo?
     private var userLocStatus: CLAuthorizationStatus?
@@ -45,8 +44,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         cityLocation = city
         if (cityLocation != nil) {
             cityInfo = await fetchCityInfo(city: cityLocation!)
+            
         } else {
-//            cityInfo = nil
+            print("Invalid City")
         }
     }
     
@@ -99,30 +99,37 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         locationManager.stopUpdatingLocation()
         
         
-        self.location = latestLocation.coordinate
-        
-        
         self.cityLocation = City(id: 1, name: "", latitude: latestLocation.coordinate.latitude, longitude: latestLocation.coordinate.longitude)
         
-        
-        getPlace(for: latestLocation) { placemark in
-            guard let placemark = placemark else { return }
-            if let cityName = placemark.locality {
-                self.cityLocation?.name = cityName
+        Task {
+            getPlace(for: latestLocation) { placemark in
+                guard let placemark = placemark else { return }
+                if let cityName = placemark.locality {
+                    self.cityLocation?.name = cityName
+                }
+                
+                if let country = placemark.country {
+                    self.cityLocation?.country = country
+                }
+                
+                if let state = placemark.administrativeArea {
+                    self.cityLocation?.admin1 = state
+                }
+                
+                if let cityTimezone = placemark.timeZone {
+                    self.cityLocation?.timezone = cityTimezone.identifier
+                }
+                print(placemark.country! + " | " + placemark.administrativeArea! + " | " + placemark.locality! + " | " + placemark.timeZone!.identifier)
+                print("ENDING FETCHING REAL POS INFO :")
+                
+                Task {
+                    self.cityInfo = await fetchCityInfo(city: self.cityLocation!)
+                    print(self.cityLocation ?? "cityLocation nil")
+                    print(self.cityInfo ?? "cityInfo nil")
+                }
+                
+                print("========================================")
             }
-            
-            if let country = placemark.country {
-                self.cityLocation?.country = country
-            }
-            
-            if let state = placemark.administrativeArea {
-                self.cityLocation?.admin1 = state
-            }
-        
-            if let cityTimezone = placemark.timeZone {
-                self.cityLocation?.timezone = cityTimezone.identifier
-            }
-            print(placemark.country! + " | " + placemark.administrativeArea! + " | " + placemark.locality! + " | " + placemark.timeZone!.identifier)
         }
         print("ENDING FILL USER LOCATION !")
     }
