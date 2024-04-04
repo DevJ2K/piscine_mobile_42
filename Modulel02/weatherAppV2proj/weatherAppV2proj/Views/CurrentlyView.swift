@@ -12,9 +12,9 @@ struct CurrentlyView: View {
     
     var body: some View {
         VStack {
-//            Text("Currently")
-//                .font(.title)
-//                .bold()
+            Text("Currently")
+                .font(.title)
+                .bold()
             if (cityInfo?.city != nil && cityInfo?.current != nil) {
             
                 Text(cityInfo?.city?.name ?? "Unknown")
@@ -23,6 +23,7 @@ struct CurrentlyView: View {
                     .font(.title2)
                 Text(cityInfo?.city?.country ?? "Unknown")
                     .font(.title2)
+                Text("\(cityInfo?.city?.latitude ?? 0) | \(cityInfo?.city?.longitude ?? 0)")
                 if (cityInfo?.current?.temperature_2m != nil) {
                     Text("\(String(format: "%.1f", cityInfo!.current!.temperature_2m))°C")
                 }

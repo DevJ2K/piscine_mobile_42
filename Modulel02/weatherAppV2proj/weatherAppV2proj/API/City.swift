@@ -135,13 +135,13 @@ func fetchCityInfo(city: City) async -> CityInfo? {
     }
     guard let url = URL(string: urlString) else {
         print("This request has failed please try with an other URL...")
-        return cityInfo
+        return nil
     }
     do {
         let (data, response) = try await URLSession.shared.data(from: url)
         guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
             print("Invalid status code != 200")
-            return cityInfo
+            return nil
         }
         
         let decodedResponse = try JSONDecoder().decode(CityInfo.self, from: data)
@@ -149,23 +149,25 @@ func fetchCityInfo(city: City) async -> CityInfo? {
         cityInfo.current = decodedResponse.current
         cityInfo.hourly = decodedResponse.hourly
         cityInfo.daily = decodedResponse.daily
-        print("HERE !")
+//        print("HERE !")
         return cityInfo
         
     } catch {
         print("Failed to fetch data")
     }
     
-    return cityInfo
+    return nil
 }
 
 func fetchCity(name: String) async -> [City] {
 //    print("0")
+    LocationManager.shared.isFetchingCity = true
     let urlString = "https://geocoding-api.open-meteo.com/v1/search?name=\(name)&count=5&language=en&format=json"
     print(urlString)
     // Create URL
     guard let url = URL(string: urlString) else {
         print("This request has failed please try with an other URL...")
+        LocationManager.shared.isFetchingCity = false
         return []
     }
     
@@ -175,6 +177,7 @@ func fetchCity(name: String) async -> [City] {
         let (data, response) = try await URLSession.shared.data(from: url)
         guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
             print("Invalid status code != 200")
+            LocationManager.shared.isFetchingCity = false
             return []
         }
 //        print("2")
@@ -182,11 +185,13 @@ func fetchCity(name: String) async -> [City] {
         let decodedResponse = try JSONDecoder().decode(CityResult.self, from: data)
 //        print("3")
 //        print(decodedResponse.results)
+        LocationManager.shared.isFetchingCity = false
         return decodedResponse.results
     } catch {
         print("Failed to fetch the data : \(error)")
     }
     
 //    print("4")
+    LocationManager.shared.isFetchingCity = false
     return []
 }

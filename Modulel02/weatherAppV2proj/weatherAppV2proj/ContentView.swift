@@ -152,30 +152,30 @@ struct ContentView: View {
             
             
             if (noAnimationDisplay) {
-                //                if (searchText.isEmpty || searchText.count == 1) {
-                //                    VStack {
-                //                    }
-                //                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                //                    .background(colorScheme == .dark ? .black : .white)
-                //                    .ignoresSafeArea(.all)
-                //                } else if (cities.count == 0 && searchText.count > 1) {
-                //                    VStack(spacing: 12) {
-                //                        Spacer()
-                //                        Image(systemName: "magnifyingglass")
-                //                            .foregroundStyle(.gray)
-                //                            .font(.system(size: 48))
-                //                        VStack(spacing: 2) {
-                //                            Text("**No Results**")
-                //                                .font(.title2)
-                //                            Text("No results found for \"\(searchText)\".")
-                //                                .foregroundStyle(.gray)
-                //                                .font(.subheadline)
-                //                        }
-                //                        Spacer()
-                //                    }
-                //                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                //                    .background(colorScheme == .dark ? .black : .white)
-                //                } else {
+                                if (searchText.isEmpty || searchText.count == 1) {
+                                    VStack {
+                                    }
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(colorScheme == .dark ? .black : .white)
+                                    .ignoresSafeArea(.all)
+                                } else if (cities.count == 0 && searchText.count > 1 && LocationManager.shared.isFetchingCity == false) {
+                                    VStack(spacing: 12) {
+                                        Spacer()
+                                        Image(systemName: "magnifyingglass")
+                                            .foregroundStyle(.gray)
+                                            .font(.system(size: 48))
+                                        VStack(spacing: 2) {
+                                            Text("**No Results**")
+                                                .font(.title2)
+                                            Text("No results found for \"\(searchText)\".")
+                                                .foregroundStyle(.gray)
+                                                .font(.subheadline)
+                                        }
+                                        Spacer()
+                                    }
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(colorScheme == .dark ? .black : .white)
+                                } else {
                 List(cities, id: \.id) { city in
                     Button(action: {
                         print("\(city.id) : \(city.longitude) | \(city.latitude)")
@@ -202,35 +202,89 @@ struct ContentView: View {
                     }
                     .foregroundStyle(.primary)
                 }
-                //                }
+                                }
             } else {
                 TabView(selection: $selectedTab) {
-                    CurrentlyView(cityInfo: locationManager.cityInfo)
-                        .navigationTitle("Currently")
-                        .tabItem {
-                            VStack {
-                                Image(systemName: "sun.min")
-                                Text("Currently")
-                                
+                    if (locationManager.cityLocation != nil && locationManager.cityInfo != nil) {
+                        CurrentlyView(cityInfo: locationManager.cityInfo)
+                            .navigationTitle("Currently")
+                            .tabItem {
+                                VStack {
+                                    Image(systemName: "sun.min")
+                                    Text("Currently")
+                                    
+                                }
                             }
+                            .tag(Tab.currently)
+                    } else {
+                        if (locationManager.cityLocation == nil) {
+                            Text("Geolocation is not available, please enable it in your App settings.")
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .tag(Tab.currently)
+                        } else if (locationManager.cityInfo == nil) {
+                            Text("The service connection is lost, please check your internet connection or try again later")
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .tag(Tab.currently)
+                        } else {
+                            Text("Internal error, please try again.")
+                                .multilineTextAlignment(.center)
+                                .tag(Tab.currently)
                         }
-                        .tag(Tab.currently)
-                    TodayView(cityInfo: locationManager.cityInfo)
-                        .tabItem {
-                            VStack {
-                                Image(systemName: "calendar.day.timeline.left")
-                                Text("Today")
+                    }
+                    if (locationManager.cityLocation != nil && locationManager.cityInfo != nil) {
+                        TodayView(cityInfo: locationManager.cityInfo)
+                            .tabItem {
+                                VStack {
+                                    Image(systemName: "calendar.day.timeline.left")
+                                    Text("Today")
+                                }
                             }
+                            .tag(Tab.today)
+                    } else {
+                        if (locationManager.cityLocation == nil) {
+                            Text("Geolocation is not available, please enable it in your App settings.")
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .tag(Tab.today)
+                        } else if (locationManager.cityInfo == nil) {
+                            Text("The service connection is lost, please check your internet connection or try again later")
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .tag(Tab.today)
+                        } else {
+                            Text("Internal error, please try again.")
+                                .multilineTextAlignment(.center)
+                                .tag(Tab.today)
                         }
-                        .tag(Tab.today)
-                    WeeklyView(cityInfo: locationManager.cityInfo)
-                        .tabItem {
-                            VStack {
-                                Image(systemName: "calendar")
-                                Text("Weekly")
+                    }
+                    if (locationManager.cityLocation != nil && locationManager.cityInfo != nil) {
+                        WeeklyView(cityInfo: locationManager.cityInfo)
+                            .tabItem {
+                                VStack {
+                                    Image(systemName: "calendar")
+                                    Text("Weekly")
+                                }
                             }
+                            .tag(Tab.weekly)
+                    } else {
+                        if (locationManager.cityLocation == nil) {
+                            Text("Geolocation is not available, please enable it in your App settings.")
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .tag(Tab.weekly)
+                        } else if (locationManager.cityInfo == nil) {
+                            Text("The service connection is lost, please check your internet connection or try again later")
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .tag(Tab.weekly)
+                        } else {
+                            Text("Internal error, please try again.")
+                                .multilineTextAlignment(.center)
+                                .tag(Tab.weekly)
                         }
-                        .tag(Tab.weekly)
+                    }
                 }
                 .animation(nil, value: selectedTab)
                 .searchable(text: $searchText)

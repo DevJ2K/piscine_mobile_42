@@ -13,6 +13,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     //    @Published var location: CLLocationCoordinate2D?
     @Published var cityLocation: City?
     @Published var cityInfo: CityInfo?
+    
+    @Published var isFetchingCity = false
     private var userLocStatus: CLAuthorizationStatus?
     
     static let shared = LocationManager()
@@ -36,6 +38,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         if (userLocStatus != nil) {
             if (userLocStatus == .authorizedWhenInUse || userLocStatus == .authorizedAlways) {
                 locationManager.startUpdatingLocation()
+            } else {
+                cityLocation = nil
+                cityInfo = nil
             }
         }
     }

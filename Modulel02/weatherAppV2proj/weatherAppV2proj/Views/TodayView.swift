@@ -13,9 +13,9 @@ struct TodayView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .center) {
-//                Text("Today")
-//                    .font(.title)
-//                    .bold()
+                Text("Today")
+                    .font(.title)
+                    .bold()
                 if (cityInfo?.city != nil && cityInfo?.current != nil) {
                     Text(cityInfo?.city?.name ?? "Unknown")
                         .font(.title2)
@@ -23,6 +23,7 @@ struct TodayView: View {
                         .font(.title2)
                     Text(cityInfo?.city?.country ?? "Unknown")
                         .font(.title2)
+                    Text("\(cityInfo?.city?.latitude ?? 0) | \(cityInfo?.city?.longitude ?? 0)")
                     if (cityInfo?.hourly != nil) {
                         ForEach(0 ..< min(24, cityInfo!.hourly!.time.count), id: \.self) { i in
                             HStack {
