@@ -87,7 +87,6 @@ struct ContentView: View {
                                     DispatchQueue.main.async {
                                         cities = []
                                     }
-                                    //                                    cities = []
                                 }
                             }
                         Button(action: {
