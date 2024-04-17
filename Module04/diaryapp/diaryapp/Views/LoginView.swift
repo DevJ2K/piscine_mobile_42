@@ -11,14 +11,20 @@ import JWTDecode
 
 struct LoginView: View {
     var body: some View {
-        Text("Welcome to your Diary")
-            .font(.title)
-        HStack {
-            Button("Login", action: self.login)
-                .padding()
-                .background(.green)
-                .foregroundStyle(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+        VStack {
+            CustomSceneView(sceneName: "diary")
+                .frame(height: 200)
+            Text("Welcome to your Diary")
+                .font(Font.custom("SignPainter", size: 52))
+                .bold()
+            HStack {
+                Button("Login", action: UserManager.shared.login)
+                    .font(Font.custom("SignPainter", size: 28))
+                    .padding()
+                    .background(.purple)
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
         }
 //        HStack {
 //            Button("Google", action: self.loginWithGoogle)
