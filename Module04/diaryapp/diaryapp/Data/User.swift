@@ -12,6 +12,7 @@ import JWTDecode
 // AuthManager to manage authentication state
 class UserManager: ObservableObject {
     @Published var isAuthenticated = false
+    @Published var user: User?
     
     static let shared = UserManager()
     
@@ -29,7 +30,8 @@ class UserManager: ObservableObject {
             case .success(let credentials):
                 //                    print(credentials.idToken)
                 self.isAuthenticated = true
-                self.decodeUserData(idToken: credentials.idToken)
+                self.user = User(from: credentials.idToken)
+                print(self.user ?? "User is still nil")
             case .failure(let error):
                 print("Failed with : \(error)")
             }
@@ -43,6 +45,7 @@ class UserManager: ObservableObject {
                 switch result {
                 case .success:
                     self.isAuthenticated = false
+                    self.user = nil
                     print("Logged out")
                 case .failure(let error):
                     print("Failed with : \(error)")

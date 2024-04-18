@@ -15,7 +15,7 @@ struct ContentView: View {
             
             
             if user.isAuthenticated == true {
-                HomeView()
+                MainView()
             } else {
                 LoginView()
             }
@@ -23,7 +23,7 @@ struct ContentView: View {
         .background(
             LinearGradient(colors: [.purple, .white], startPoint: .top, endPoint: .bottom))
         .ignoresSafeArea()
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(.light)
     }
 }
 
