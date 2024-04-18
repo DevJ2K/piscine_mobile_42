@@ -10,6 +10,7 @@ import FirebaseCore
 
 @main
 struct diaryappApp: App {
+    @StateObject var dataManager = DataManager()
     
     init() {
         FirebaseApp.configure()
@@ -18,6 +19,7 @@ struct diaryappApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(dataManager)
         }
     }
 }

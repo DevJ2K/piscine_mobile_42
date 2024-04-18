@@ -10,12 +10,14 @@ import Auth0
 
 struct ContentView: View {
     @ObservedObject var user = UserManager.shared
+    @EnvironmentObject var dataManager: DataManager
     var body: some View {
         ZStack {
             
             
             if user.isAuthenticated == true {
                 MainView()
+                    .environmentObject(dataManager)
             } else {
                 LoginView()
             }

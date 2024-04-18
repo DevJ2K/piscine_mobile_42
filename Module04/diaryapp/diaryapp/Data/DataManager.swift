@@ -19,10 +19,10 @@ class DataManager: ObservableObject {
     
     func fetchEntries() {
         diaryEntries.removeAll()
-//        guard let user = UserManager.shared.user else { return }
+        guard let user = UserManager.shared.user else { return }
         let db = Firestore.firestore()
         let ref = db.collection("notes")
-//            .whereField("usermail", isEqualTo: user.email)
+            .whereField("usermail", isEqualTo: user.email)
         ref.getDocuments { snapshot, error in
             guard error == nil else {
                 print("Error => \(error!.localizedDescription)")
@@ -49,9 +49,9 @@ class DataManager: ObservableObject {
     }
     
     func addEntry(title: String, icon: String, text: String) {
-//        guard let user = UserManager.shared.user else { return }
+        guard let user = UserManager.shared.user else { return }
         let db = Firestore.firestore()
-        let diaryEntry = DiaryEntry(id: "", auth_method: "any", date: Date(), icon: icon, text: text, title: title, usermail: "any")
+        let diaryEntry = DiaryEntry(id: "", auth_method: "any", date: Date(), icon: icon, text: text, title: title, usermail: user.email)
         let ref = db.collection("notes")
         ref.addDocument(data: [
             "auth_method": diaryEntry.auth_method,
@@ -66,7 +66,7 @@ class DataManager: ObservableObject {
     }
     
     func deleteEntry(docId: String) {
-//        guard let user = UserManager.shared.user else { return }
+        guard let user = UserManager.shared.user else { return }
         let db = Firestore.firestore()
         let ref = db.collection("notes")
         ref.document(docId).delete()

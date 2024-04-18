@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MainView: View {
+    @EnvironmentObject var dataManager: DataManager
+
     var body: some View {
         TabView {
             ProfileView()
