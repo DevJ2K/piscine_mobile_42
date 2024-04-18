@@ -12,10 +12,12 @@ import JWTDecode
 struct LoginView: View {
     var body: some View {
         VStack {
+            Spacer()
             CustomSceneView(sceneName: "diary")
                 .frame(height: 200)
             Text("Welcome to your Diary")
-                .font(Font.custom("SignPainter", size: 52))
+                .font(Font.custom("SignPainter", size: 42))
+                .padding()
                 .bold()
             HStack {
                 Button("Login", action: UserManager.shared.login)
@@ -25,6 +27,7 @@ struct LoginView: View {
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
+            Spacer()
         }
 //        HStack {
 //            Button("Google", action: self.loginWithGoogle)
@@ -106,5 +109,6 @@ extension LoginView {
 }
 
 #Preview {
-    LoginView()
+    ContentView()
+//    LoginView()
 }

@@ -14,40 +14,16 @@ struct ContentView: View {
         ZStack {
             
             
-            if user.isAuthenticated {
-                VStack {
-                    Spacer()
-                    VStack {
-                        Text("You are logged !")
-                        Button("Logout", action: user.logout)
-                            .background(.red)
-                            .padding()
-                    }
-                    .padding()
-                    Spacer()
-                    
-                }
+            if user.isAuthenticated == true {
+                HomeView()
             } else {
-                VStack {
-                    Spacer()
-                    LoginView()
-                        .padding()
-                    Spacer()
-                    //                        Button("Login", action: self.login)
-                }
+                LoginView()
             }
         }
         .background(
             LinearGradient(colors: [.purple, .white], startPoint: .top, endPoint: .bottom))
         .ignoresSafeArea()
-        
-        //        VStack {
-        //            Image(systemName: "globe")
-        //                .imageScale(.large)
-        //                .foregroundStyle(.tint)
-        //            Text("Hello, world!")
-        //        }
-        //        .padding()
+        .preferredColorScheme(.dark)
     }
 }
 
