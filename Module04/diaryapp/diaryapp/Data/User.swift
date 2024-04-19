@@ -23,6 +23,8 @@ class UserManager: ObservableObject {
     }
     
     func login(dataManager: DataManager) {
+        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+
         Auth0
         .webAuth()
         .start { result in
@@ -31,6 +33,7 @@ class UserManager: ObservableObject {
                 //                    print(credentials.idToken)
                 self.isAuthenticated = true
                 self.user = User(from: credentials.idToken)
+                let _ = credentialsManager.store(credentials: credentials)
                 print(self.user ?? "User is still nil")
                 dataManager.fetchEntries()
             case .failure(let error):
@@ -40,6 +43,8 @@ class UserManager: ObservableObject {
     }
     
     func logout() {
+        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+        
         Auth0
             .webAuth()
             .clearSession { result in
@@ -47,6 +52,7 @@ class UserManager: ObservableObject {
                 case .success:
                     self.isAuthenticated = false
                     self.user = nil
+                    let _ = credentialsManager.clear()
                     print("Logged out")
                 case .failure(let error):
                     print("Failed with : \(error)")
