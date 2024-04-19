@@ -66,7 +66,7 @@ class DataManager: ObservableObject {
     }
     
     func deleteEntry(docId: String) {
-        guard let user = UserManager.shared.user else { return }
+        if (UserManager.shared.user == nil) { return }
         let db = Firestore.firestore()
         let ref = db.collection("notes")
         ref.document(docId).delete()

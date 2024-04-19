@@ -22,7 +22,7 @@ class UserManager: ObservableObject {
         //        print(jwt["email"].string)
     }
     
-    func login() {
+    func login(dataManager: DataManager) {
         Auth0
         .webAuth()
         .start { result in
@@ -32,6 +32,7 @@ class UserManager: ObservableObject {
                 self.isAuthenticated = true
                 self.user = User(from: credentials.idToken)
                 print(self.user ?? "User is still nil")
+                dataManager.fetchEntries()
             case .failure(let error):
                 print("Failed with : \(error)")
             }

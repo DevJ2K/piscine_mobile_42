@@ -20,6 +20,7 @@ struct ContentView: View {
                     .environmentObject(dataManager)
             } else {
                 LoginView()
+                    .environmentObject(dataManager)
             }
         }
         .background(
