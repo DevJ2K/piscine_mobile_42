@@ -14,6 +14,7 @@ class DataManager: ObservableObject {
     @Published var diaryEntries: [DiaryEntry] = []
     
     init() {
+        print("Init fetch entries !")
         fetchEntries()
     }
     

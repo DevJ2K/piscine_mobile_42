@@ -16,8 +16,8 @@ struct diaryappApp: App {
     init() {
         FirebaseApp.configure()
         
-        var credentialsManager = CredentialsManager(authentication: Auth0.authentication())
-        credentialsManager.enableBiometrics(withTitle: "Unlock with Face ID")
+        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+//        credentialsManager.enableBiometrics(withTitle: "Unlock with Face ID")
 
         guard credentialsManager.hasValid() else {
             UserManager.shared.isAuthenticated = false
@@ -35,7 +35,6 @@ struct diaryappApp: App {
             case .failure(let error):
                 print("Failed with: \(error)")
             }
-            
         }
     }
     
