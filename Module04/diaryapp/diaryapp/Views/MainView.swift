@@ -21,6 +21,10 @@ struct MainView: View {
                     Image(systemName: "calendar")
                 }
         }
+        .onAppear() {
+            print("Init fetch entries !")
+            self.dataManager.fetchEntries()
+        }
     }
 }
 

@@ -13,10 +13,10 @@ import FirebaseFirestore
 class DataManager: ObservableObject {
     @Published var diaryEntries: [DiaryEntry] = []
     
-    init() {
-        print("Init fetch entries !")
-        fetchEntries()
-    }
+//    init() {
+//        print("Init fetch entries !")
+//        fetchEntries()
+//    }
     
     func fetchEntries() {
         diaryEntries.removeAll()

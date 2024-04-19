@@ -35,7 +35,7 @@ class UserManager: ObservableObject {
                 self.user = User(from: credentials.idToken)
                 let _ = credentialsManager.store(credentials: credentials)
                 print(self.user ?? "User is still nil")
-                dataManager.fetchEntries()
+//                dataManager.fetchEntries()
             case .failure(let error):
                 print("Failed with : \(error)")
             }
