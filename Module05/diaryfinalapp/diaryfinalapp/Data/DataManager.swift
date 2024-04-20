@@ -35,17 +35,24 @@ class DataManager: ObservableObject {
                     let data = document.data()
                     
                     let auth_method = data["auth_method"] as? String ?? ""
-                    let date = data["date"] as? Date ?? Date()
+                    let dateTimestamp = data["date"] as? Timestamp ?? Timestamp()
                     let icon = data["icon"] as? String ?? ""
                     let text = data["text"] as? String ?? ""
                     let title = data["title"] as? String ?? ""
                     let usermail = data["usermail"] as? String ?? ""
                     
+                    let date = dateTimestamp.dateValue()
+//                    print("Timestamp => \(date.dateValue())")
                     let diaryEntry = DiaryEntry(id: document.documentID, auth_method: auth_method, date: date, icon: icon, text: text, title: title, usermail: usermail)
                     self.diaryEntries.append(diaryEntry)
                     
                 }
+                self.diaryEntries = self.diaryEntries.sorted { $0.date > $1.date }
             }
+            for i in self.diaryEntries {
+                print(i.date)
+            }
+//            print(self.diaryEntries)
         }
     }
     

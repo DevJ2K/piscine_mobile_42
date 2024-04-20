@@ -314,7 +314,9 @@ struct ProfileView: View {
                                     Spacer()
                                 }
                                 .padding(.vertical)
+                                .frame(height: 100)
                                 .frame(maxWidth: .infinity)
+                                
                                 .padding(.horizontal)
                                 .background(.white)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
