@@ -12,13 +12,13 @@ struct MainView: View {
 
     var body: some View {
         TabView {
-            CalendarView()
-                .tabItem {
-                    Image(systemName: "calendar")
-                }
             ProfileView()
                 .tabItem {
                     Image(systemName: "person.fill")
+                }
+            CalendarView()
+                .tabItem {
+                    Image(systemName: "calendar")
                 }
         }
         .onAppear() {
