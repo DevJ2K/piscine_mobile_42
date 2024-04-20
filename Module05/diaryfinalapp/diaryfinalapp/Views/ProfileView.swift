@@ -231,49 +231,91 @@ struct ProfileView: View {
     
     var body: some View {
         NavigationView {
-            VStack {
+            ScrollView {
+                
+                HStack {
+                    
+                    ZStack {
+                        Circle()
+                            .fill(.green)
+                            .frame(maxWidth: 110, maxHeight: 140)
+                        
+                        AsyncImage(
+                            url: URL(string: UserManager.shared.user?.picture ?? ""),
+                            content: { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(maxWidth: 105, maxHeight: 140)
+                                    .clipShape(Circle())
+                            },
+                            placeholder: {
+                                ProgressView()
+                            }
+                        )
+                    }
+                    //                .background(.red)
+                    Text(UserManager.shared.user?.name ?? "")
+                        .font(Font.custom("SignPainter", size: 32))
+                        .foregroundStyle(.black)
+                    Spacer()
+                    Button(action: UserManager.shared.logout, label: {
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                    })
+                    .foregroundStyle(.black)
+                    .bold()
+                }
+                .padding(.horizontal)
+                //                .background(.green.gradient)
+                
+                Rectangle()
+                    .frame(height: 1)
+                
                 VStack {
                     Text("Your last diary entries")
-                        .font(Font.custom("SignPainter", size: 42))
+                        .font(Font.custom("SignPainter", size: 38))
                         .foregroundStyle(.white)
-                        .padding()
+                        .padding(.horizontal)
                         .bold()
+                    
                     ScrollView {
-                        ForEach(dataManager.diaryEntries, id: \.id) { listEntry in
+                        ForEach(0 ..< min(dataManager.diaryEntries.count, 2), id: \.self) { i in
                             //                        ForEach(testEntry, id: \.id) { listEntry in
                             NavigationLink {
-                                DeleteEntryView(entry: listEntry)
+                                DeleteEntryView(entry: dataManager.diaryEntries[i])
                                     .environmentObject(dataManager)
                             } label: {
                                 
                                 HStack {
                                     VStack {
-                                        Text(dateToString(date: listEntry.date, format: "dd"))
-                                            .font(Font.custom("SignPainter", size: 22))
+                                        Text(dateToString(date: dataManager.diaryEntries[i].date, format: "dd"))
+                                            .font(Font.custom("SignPainter", size: 14))
                                             .foregroundStyle(.black)
-                                        Text(dateToString(date: listEntry.date, format: "MMMM"))
-                                            .font(Font.custom("SignPainter", size: 22))
+                                        Text(dateToString(date: dataManager.diaryEntries[i].date, format: "MMMM"))
+                                            .font(Font.custom("SignPainter", size: 14))
                                             .foregroundStyle(.black)
-                                        Text(dateToString(date: listEntry.date, format: "YYYY"))
+                                        Text(dateToString(date: dataManager.diaryEntries[i].date, format: "YYYY"))
                                             .font(Font.custom("SignPainter", size: 14))
                                             .foregroundStyle(.black)
                                             .opacity(0.3)
                                     }
                                     .padding(.horizontal)
                                     
-                                    Image(listEntry.icon)
+                                    Image(dataManager.diaryEntries[i].icon)
                                         .resizable()
                                         .frame(width: 16, height: 16)
                                     Rectangle()
-                                        .frame(width: 1)
+                                        .fill(.black.opacity(0.4))
+                                        .frame(width: 1, height: .infinity)
                                         .padding(.horizontal)
-                                    Text(listEntry.title)
-                                        .font(Font.custom("SignPainter", size: 32))
+                                    Text(dataManager.diaryEntries[i].title)
+                                        .font(Font.custom("SignPainter", size: 22))
                                         .foregroundStyle(.black)
                                     Spacer()
                                 }
+                                .padding(.vertical)
                                 .frame(maxWidth: .infinity)
-                                .padding()
+                                .padding(.horizontal)
                                 .background(.white)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
@@ -281,69 +323,65 @@ struct ProfileView: View {
                     }
                 }
                 .padding()
-                .frame(height: 400)
-                .background(.purple.opacity(0.8))
+                .frame(height: 300)
+                .background(.green.opacity(0.5))
                 .clipShape(RoundedRectangle(cornerRadius: 16))
+                .padding(.horizontal)
+                
+                VStack {
+                    Text("Your feel for your \(dataManager.diaryEntries.count) entries")
+                        .font(Font.custom("SignPainter", size: 32))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal)
+                        .bold()
+                    
+                    ScrollView {
+                        ForEach(dataManager.diaryEntries, id: \.id) { listEntry in
+                            NavigationLink {
+                                DeleteEntryView(entry: listEntry)
+                                    .environmentObject(dataManager)
+                            } label: {
+                                HStack {
+                                    Image(listEntry.icon)
+                                        .resizable()
+                                        .frame(width: 16, height: 16)
+                                    Rectangle()
+                                        .frame(width: 20, height: 0)
+                                    Text("50%")
+                                        .font(Font.custom("SignPainter", size: 24))
+                                        .foregroundStyle(.black)
+                                    Spacer()
+                                }
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .padding(.horizontal)
+                                .background(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                
+                            }
+                        }
+                    }
+                }
+                .padding()
+                .frame(height: 300)
+                .background(.mint.opacity(0.8))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .padding(.horizontal)
+                
                 Spacer()
                 Button("New diary entry", action: {
                     self.showNewEntryModal = true
                 })
                 .font(Font.custom("SignPainter", size: 28))
                 .padding()
-                .background(.purple)
+                .background(.green)
                 .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding()
                 .sheet(isPresented: self.$showNewEntryModal) {
                     AddEntryView(isPresented: $showNewEntryModal)
                         .environmentObject(dataManager)
-                    //                        .presentationDetents([.large])
                 }
-            }
-            //            List(testEntry, id: \.id) { listEntry in
-            ////            List(dataManager.diaryEntries, id: \.id) { listEntry in
-            //                HStack {
-            //                    HStack {
-            //                        Text(listEntry.date?.description ?? "")
-            //                        Text(listEntry.icon)
-            //                    }
-            //                    Divider()
-            //                        .padding(.vertical)
-            //                    Text(listEntry.title)
-            //                }
-            //            }
-            //            VStack {
-            //
-            //                Spacer()
-            //                HStack {
-            //                    Spacer()
-            //                }
-            //                VStack {
-            //                    Text("You are logged !")
-            //                        .font(Font.custom("SignPainter", size: 42))
-            //
-            //                        .padding()
-            //                    Button("Logout", action: UserManager.shared.logout)
-            //                        .font(Font.custom("SignPainter", size: 28))
-            //                        .padding()
-            //                        .background(.red)
-            //                        .foregroundStyle(.white)
-            //                        .clipShape(RoundedRectangle(cornerRadius: 16))
-            //                }
-            //                .padding()
-            //                Spacer()
-            //
-            //            }
-            .navigationTitle("Profile")
-            .toolbar {
-                Button(action: UserManager.shared.logout, label: {
-                    Image(systemName: "rectangle.portrait.and.arrow.right")
-                })
-                //                        .font(Font.custom("SignPainter", size: 28))
-                //                        .padding()
-                //                        .background(.red)
-                //                        .foregroundStyle(.white)
-                //                        .clipShape(RoundedRectangle(cornerRadius: 16))
             }
         }
         
@@ -352,9 +390,9 @@ struct ProfileView: View {
 
 #Preview {
     //    ContentView()
-        MainView()
+    MainView()
     //    AddEntryView()
-//            ProfileView()
-//    DeleteEntryView(entry: DiaryEntry(id: "1", auth_method: "github", date: Date(), icon: "happy", text: "Nam quis nulla. Integer malesuada. In in enim a arcu imperdiet malesuada. Sed vel lectus. Donec odio urna, tempus molestie, porttitor ut, iaculis quis, sem. Phasellus rhoncus. Aenean id metus id velit ullamcorper pulvinar. Vestibulum fermentum tortor id mi. Pellentesque ipsum. Nulla non arcu lacinia neque faucibus fringilla. Nulla non lectus sed nisl molestie malesuada. Proin in tellus sit amet nibh dignissim sagittis. Vivamus luctus egestas leo. Maecenas sollicitudin. Nullam rhoncus aliquam metus. Etiam egestas wisi a erat.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nullam feugiat, turpis at pulvinar vulputate, erat libero tristique tellus, nec bibendum odio risus sit amet ante. Aliquam erat volutpat. Nunc auctor. Mauris pretium quam et urna. Fusce nibh. Duis risus. Curabitur sagittis hendrerit ante. Aliquam erat volutpat. Vestibulum erat nulla, ullamcorper nec, rutrum non, nonummy ac, erat. Duis condimentum augue id magna semper rutrum. Nullam justo enim, consectetuer nec, ullamcorper ac, vestibulum in, elit. Proin pede metus, vulputate nec, fermentum fringilla, vehicula vitae, justo. Fusce consectetuer risus a nunc. Aliquam ornare wisi eu metus. Integer pellentesque quam vel velit. Duis pulvinar. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi gravida libero nec velit. Morbi scelerisque luctus velit. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Proin mattis lacinia justo. Vestibulum facilisis auctor urna. Aliquam in lorem sit amet leo accumsan lacinia. Integer rutrum, orci vestibulum ullamcorper ultricies, lacus quam ultricies odio, vitae placerat pede sem sit amet enim. Phasellus et lorem id felis nonummy placerat. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Aenean vel massa quis mauris vehicula lacinia. Quisque tincidunt scelerisque libero. Maecenas libero. Etiam dictum tincidunt diam. Donec ipsum massa, ullamcorper in, auctor et, scelerisque sed, est. Suspendisse nisl. Sed convallis magna eu sem. Cras pede libero, dapibus nec, pretium sit amet, tempor quis, urna. Etiam posuere quam ac quam. Maecenas aliquet accumsan leo. Nullam dapibus fermentum ipsum. Etiam quis quam. Integer lacinia. Nulla est. Nulla turpis magna, cursus sit amet, suscipit a, interdum id, felis. Integer vulputate sem a nibh rutrum consequat. Maecenas lorem. Pellentesque pretium lectus id turpis. Etiam sapien elit, consequat eget, tristique non, venenatis quis, ante. Fusce wisi. Phasellus faucibus molestie nisl. Fusce eget urna. Curabitur vitae diam non enim vestibulum interdum. Nulla quis diam. Ut tempus purus at lorem. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Duis sapien nunc, commodo et, interdum suscipit, sollicitudin et, dolor. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aliquam id dolor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Mauris dictum facilisis augue. Fusce tellus. Pellentesque arcu. Maecenas fermentum, sem in pharetra pellentesque, velit turpis volutpat ante, in pharetra metus odio a lectus. Sed elit dui, pellentesque a, faucibus vel, interdum nec, diam. Mauris dolor felis, sagittis at, luctus sed, aliquam non, tellus. Etiam ligula pede, sagittis quis, interdum ultricies, scelerisque eu, urna. Nullam at arcu a est sollicitudin euismod. Praesent dapibus. Duis bibendum, lectus ut viverra rhoncus, dolor nunc faucibus libero, eget facilisis enim ipsum id lacus. Nam sed tellus id magna elementum tincidunt.Morbi a metus. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Nullam sapien sem, ornare ac, nonummy non, lobortis a, enim. Nunc tincidunt ante vitae massa. Duis ante orci, molestie vitae, vehicula venenatis, tincidunt ac, pede. Nulla accumsan, elit sit amet varius semper, nulla mauris mollis quam, tempor suscipit diam nulla vel leo. Etiam commodo dui eget wisi. Donec iaculis gravida nulla. Donec quis nibh at felis congue commodo", title: "Title 1", usermail: "j2k@gmail.com"))
+    //            ProfileView()
+    //    DeleteEntryView(entry: DiaryEntry(id: "1", auth_method: "github", date: Date(), icon: "happy", text: "Nam quis nulla. Integer malesuada. In in enim a arcu imperdiet malesuada. Sed vel lectus. Donec odio urna, tempus molestie, porttitor ut, iaculis quis, sem. Phasellus rhoncus. Aenean id metus id velit ullamcorper pulvinar. Vestibulum fermentum tortor id mi. Pellentesque ipsum. Nulla non arcu lacinia neque faucibus fringilla. Nulla non lectus sed nisl molestie malesuada. Proin in tellus sit amet nibh dignissim sagittis. Vivamus luctus egestas leo. Maecenas sollicitudin. Nullam rhoncus aliquam metus. Etiam egestas wisi a erat.Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nullam feugiat, turpis at pulvinar vulputate, erat libero tristique tellus, nec bibendum odio risus sit amet ante. Aliquam erat volutpat. Nunc auctor. Mauris pretium quam et urna. Fusce nibh. Duis risus. Curabitur sagittis hendrerit ante. Aliquam erat volutpat. Vestibulum erat nulla, ullamcorper nec, rutrum non, nonummy ac, erat. Duis condimentum augue id magna semper rutrum. Nullam justo enim, consectetuer nec, ullamcorper ac, vestibulum in, elit. Proin pede metus, vulputate nec, fermentum fringilla, vehicula vitae, justo. Fusce consectetuer risus a nunc. Aliquam ornare wisi eu metus. Integer pellentesque quam vel velit. Duis pulvinar. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi gravida libero nec velit. Morbi scelerisque luctus velit. Etiam dui sem, fermentum vitae, sagittis id, malesuada in, quam. Proin mattis lacinia justo. Vestibulum facilisis auctor urna. Aliquam in lorem sit amet leo accumsan lacinia. Integer rutrum, orci vestibulum ullamcorper ultricies, lacus quam ultricies odio, vitae placerat pede sem sit amet enim. Phasellus et lorem id felis nonummy placerat. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci. Aenean vel massa quis mauris vehicula lacinia. Quisque tincidunt scelerisque libero. Maecenas libero. Etiam dictum tincidunt diam. Donec ipsum massa, ullamcorper in, auctor et, scelerisque sed, est. Suspendisse nisl. Sed convallis magna eu sem. Cras pede libero, dapibus nec, pretium sit amet, tempor quis, urna. Etiam posuere quam ac quam. Maecenas aliquet accumsan leo. Nullam dapibus fermentum ipsum. Etiam quis quam. Integer lacinia. Nulla est. Nulla turpis magna, cursus sit amet, suscipit a, interdum id, felis. Integer vulputate sem a nibh rutrum consequat. Maecenas lorem. Pellentesque pretium lectus id turpis. Etiam sapien elit, consequat eget, tristique non, venenatis quis, ante. Fusce wisi. Phasellus faucibus molestie nisl. Fusce eget urna. Curabitur vitae diam non enim vestibulum interdum. Nulla quis diam. Ut tempus purus at lorem. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Duis sapien nunc, commodo et, interdum suscipit, sollicitudin et, dolor. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aliquam id dolor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Mauris dictum facilisis augue. Fusce tellus. Pellentesque arcu. Maecenas fermentum, sem in pharetra pellentesque, velit turpis volutpat ante, in pharetra metus odio a lectus. Sed elit dui, pellentesque a, faucibus vel, interdum nec, diam. Mauris dolor felis, sagittis at, luctus sed, aliquam non, tellus. Etiam ligula pede, sagittis quis, interdum ultricies, scelerisque eu, urna. Nullam at arcu a est sollicitudin euismod. Praesent dapibus. Duis bibendum, lectus ut viverra rhoncus, dolor nunc faucibus libero, eget facilisis enim ipsum id lacus. Nam sed tellus id magna elementum tincidunt.Morbi a metus. Phasellus enim erat, vestibulum vel, aliquam a, posuere eu, velit. Nullam sapien sem, ornare ac, nonummy non, lobortis a, enim. Nunc tincidunt ante vitae massa. Duis ante orci, molestie vitae, vehicula venenatis, tincidunt ac, pede. Nulla accumsan, elit sit amet varius semper, nulla mauris mollis quam, tempor suscipit diam nulla vel leo. Etiam commodo dui eget wisi. Donec iaculis gravida nulla. Donec quis nibh at felis congue commodo", title: "Title 1", usermail: "j2k@gmail.com"))
         .environmentObject(DataManager())
 }
