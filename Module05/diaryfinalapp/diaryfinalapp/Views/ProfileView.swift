@@ -245,7 +245,7 @@ struct DeleteEntryView: View {
 
 struct ProfileView: View {
     @EnvironmentObject var dataManager: DataManager
-    @State private var showNewEntryModal: Bool = true
+    @State private var showNewEntryModal: Bool = false
     //    @State private var showDeleteEntryModal: Bool = true
     
     
@@ -258,6 +258,28 @@ struct ProfileView: View {
     //        DiaryEntry(id: "6", auth_method: "github", date: Date(), icon: "meh", text: "Coool journey", title: "Title 1", usermail: "j2k@gmail.com"),
     //        DiaryEntry(id: "7", auth_method: "github", date: Date(), icon: "sad", text: "Coool journey", title: "Title 1", usermail: "j2k@gmail.com"),
     //    ]
+    
+    func getPourcentageIcon(emoji: String) -> Int {
+        if (emoji == "very_sad") {
+            return 0
+        }
+        if (emoji == "sad") {
+            return 20
+        }
+        if (emoji == "meh") {
+            return 40
+        }
+        if (emoji == "cool") {
+            return 60
+        }
+        if (emoji == "happy") {
+            return 80
+        }
+        if (emoji == "very_happy") {
+            return 100
+        }
+        return (0)
+    }
     
     var body: some View {
         NavigationView {
@@ -379,7 +401,7 @@ struct ProfileView: View {
                                         .frame(width: 16, height: 16)
                                     Rectangle()
                                         .frame(width: 20, height: 0)
-                                    Text("50%")
+                                    Text("\(getPourcentageIcon(emoji: listEntry.icon))%")
                                         .font(Font.custom("SignPainter", size: 24))
                                         .foregroundStyle(.black)
                                     Spacer()
